@@ -24,16 +24,5 @@
         "cache-control": "public, max-age=0, s-maxage=86400, must-revalidate"
       }
     }
-  ],
-  "platform": {
-    "apiRuntime": "python:3.9"
-  },
-  "forwardingGateway": {
-    "requiredHeaders": {
-      "X-Forwarded-Proto": "https"
-    },
-    "allowedForwardedHosts": [
-      "*"
-    ]
-  }
+  ]
 }
