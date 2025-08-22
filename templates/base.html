@@ -25,62 +25,91 @@
     <script src="{{ url_for('static', filename='js/project-modal.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
+    <style>
+        /* Ensure the matrix container covers the full viewport */
+        #matrix-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Behind other content */
+            pointer-events: none; /* Allow clicks to pass through */
+            opacity: 0.3; /* Make it more subtle */
+        }
+        
+        /* Make sure content is above the matrix background */
+        .content {
+            position: relative;
+            z-index: 1;
+            background-color: rgba(0, 0, 0, 0.7); /* Slightly dark background for better readability */
+        }
+    </style>
+    
     <script>
         // Initialize components when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM fully loaded, initializing components...');
             
-            // Initialize Matrix effect with optimized settings
-            const matrixEffect = new MatrixRain('matrix-container', {
-                charset: '01',
-                fontSize: 20,
-                speed: 20,
-                density: 0.5,
-                minDrops: 15,
-                maxDrops: 50,
-                colors: ['#00ff41', '#00cc33', '#00aa33'],
-                fadeFactor: 0.05
-            });
-            
-            // Initialize Mouse Trail with optimized settings
-            const mouseTrail = new MouseTrail({
-                maxParticles: 50,
-                particleSize: 14,
-                colors: ['#00ff41', '#00cc33', '#00aa33'],
-                baseSpeed: 0.6,
-                maxSpeed: 2.5,
-                trailLength: 20,
-                particleLifetime: 60,
-                spawnRate: 1,
-                opacity: 0.7,
-                glowIntensity: 8,
-                fontSize: 14
-            });
-            
-            // Initialize Project Modals if available
-            if (typeof initProjectModals === 'function') {
-                try {
-                    initProjectModals();
-                    console.log('Project modals initialized');
-                } catch (e) {
-                    console.error('Error initializing project modals:', e);
+            // Check if required elements exist
+            const matrixContainer = document.getElementById('matrix-container');
+            if (!matrixContainer) {
+                console.error('Matrix container not found!');
+            } else {
+                console.log('Matrix container found:', matrixContainer);
+                // Initialize Matrix effect with optimized settings
+                console.log('Initializing Matrix effect...');
+                window.matrixEffect = new MatrixRain('matrix-container', {
+                    charset: '01',
+                    fontSize: 20,
+                    speed: 20,
+                    density: 0.5,
+                    minDrops: 15,
+                    maxDrops: 50,
+                    colors: ['#00ff41', '#00cc33', '#00aa33'],
+                    fadeFactor: 0.05
+                });
+                
+                // Initialize Mouse Trail with optimized settings for smooth performance
+                const mouseTrail = new MouseTrail({
+                    maxParticles: 30,           // Reduced from 50 to 30 for better performance
+                    particleSize: 12,           // Slightly smaller particles
+                    colors: ['#00ff41', '#00cc33'], // Reduced color variations
+                    baseSpeed: 0.8,             // Slightly faster base speed
+                    maxSpeed: 3.0,              // Increased max speed
+                    trailLength: 15,            // Shorter trail for better performance
+                    particleLifetime: 45,        // Shorter lifetime for snappier feel
+                    spawnRate: 2,               // More frequent spawning for smoother trail
+                    opacity: 0.8,               // Slightly more visible
+                    glowIntensity: 6,           // Reduced glow for better performance
+                    fontSize: 12                 // Smaller font size for better performance
+                });
+                
+                // Initialize Project Modals if available
+                if (typeof initProjectModals === 'function') {
+                    try {
+                        initProjectModals();
+                        console.log('Project modals initialized');
+                    } catch (e) {
+                        console.error('Error initializing project modals:', e);
+                    }
                 }
-            }
-            
-            // Cleanup on page unload
-            window.addEventListener('beforeunload', function() {
-                if (matrixEffect && typeof matrixEffect.destroy === 'function') {
-                    matrixEffect.destroy();
-                }
-                if (mouseTrail && typeof mouseTrail.destroy === 'function') {
-                    mouseTrail.destroy();
-                }
-            });
-            
-            // Expose for debugging
-            window.matrixEffect = matrixEffect;
-            window.mouseTrail = mouseTrail;
-        });
+                
+                // Cleanup on page unload
+                window.addEventListener('beforeunload', function() {
+                    if (window.matrixEffect && typeof window.matrixEffect.destroy === 'function') {
+                        window.matrixEffect.destroy();
+                    }
+                    if (mouseTrail && typeof mouseTrail.destroy === 'function') {
+                        mouseTrail.destroy();
+                    }
+                });
+                
+                // Expose for debugging
+                window.matrixEffect = window.matrixEffect || matrixEffect;
+                window.mouseTrail = mouseTrail;
+            } // Close the else block
+        }); // Close the DOMContentLoaded event listener
     </script>
 </body>
 </html>

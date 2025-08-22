@@ -31,6 +31,7 @@ class MouseTrail {
         
         // Initialize state
         this.particles = [];
+        this.particlePool = []; // Initialize particle pool for reuse
         this.mouseX = 0;
         this.mouseY = 0;
         this.lastMouseX = 0;
@@ -41,6 +42,7 @@ class MouseTrail {
         this.lastFrameTime = 0;
         this.lastMove = 0;
         this.dpr = window.devicePixelRatio || 1;
+        this.frameCount = 0; // Add frame counter for timing
         
         // Bind methods
         this.animate = this.animate.bind(this);
@@ -105,32 +107,29 @@ class MouseTrail {
     setupEventListeners() {
         // Throttled mousemove handler
         this.handleMouseMove = (e) => {
+            // Throttle the mousemove handler for better performance
             const now = performance.now();
-            if (now - this.lastMove < 8) return; // ~120fps for smoother tracking
-            this.lastMove = now;
+            if (now - this.lastMove < 16) return; // ~60fps
             
-            // Update position with easing for smoother movement
+            // Update mouse position with device pixel ratio
+            const rect = this.canvas.getBoundingClientRect();
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+            
             this.lastMouseX = this.mouseX;
             this.lastMouseY = this.mouseY;
-            
-            // Smooth movement
-            this.mouseX += (e.clientX - this.mouseX) * 0.5;
-            this.mouseY += (e.clientY - this.mouseY) * 0.5;
+            this.mouseX = (e.clientX - rect.left) * scaleX;
+            this.mouseY = (e.clientY - rect.top) * scaleY;
             
             // Calculate velocity with smoothing
-            this.velocityX = (this.mouseX - this.lastMouseX) * 0.3;
-            this.velocityY = (this.mouseY - this.lastMouseY) * 0.3;
+            this.velocityX = this.mouseX - this.lastMouseX;
+            this.velocityY = this.mouseY - this.lastMouseY;
             
-            // Create new particles with velocity-based spawning
-            const speed = Math.sqrt(this.velocityX * this.velocityX + this.velocityY * this.velocityY);
-            const particlesToSpawn = Math.min(
-                Math.ceil(speed * 0.1 * this.config.spawnRate),
-                this.config.spawnRate * 3
-            );
+            // Update last move timestamp
+            this.lastMove = now;
             
-            for (let i = 0; i < particlesToSpawn; i++) {
-                this.createParticle();
-            }
+            // Create particles on mouse move
+            this.createParticle();
         };
         
         // Add event listeners with passive where appropriate
@@ -140,19 +139,24 @@ class MouseTrail {
     }
     
     createParticle() {
-        // Create a single particle per frame for better performance
+        // Only create particles if mouse has moved recently
         const now = performance.now();
+        if (now - this.lastMove > 100) return; // Skip if mouse hasn't moved recently
         
         // Reuse particles from pool if available
         let particle;
-        if (this.particlePool.length > 0) {
+        if (this.particlePool && this.particlePool.length > 0) {
             particle = this.particlePool.pop();
         } else if (this.particles.length < this.config.maxParticles) {
             // Create new particle if pool is empty and we haven't reached max
             particle = {};
         } else {
             // Reuse the oldest particle if we've reached max
-            particle = this.particles.shift();
+            const oldParticle = this.particles.shift();
+            if (oldParticle) {
+                this.particlePool.push(oldParticle);
+                particle = this.particlePool.pop();
+            }
         }
         
         if (!particle) return;
@@ -189,114 +193,94 @@ class MouseTrail {
     }
     
     updateParticles(deltaTime) {
-        const now = performance.now();
-        const deltaFactor = Math.min(deltaTime / (1000 / 60), 2);
+        // Use a fixed time step for consistent animation
+        const fixedDeltaTime = Math.min(deltaTime, 1000 / 30); // Cap at 30fps for physics
         
-        // Update particles in reverse order for safe removal
-        for (let i = this.particles.length - 1; i >= 0; i--) {
+        // Update existing particles in reverse order for safe removal
+        let i = this.particles.length;
+        while (i--) {
             const p = this.particles[i];
-            const age = now - p.createdAt;
-            const lifeRatio = 1 - (age / (p.originalLife * 16.67));
             
-            // Skip if particle is dead
-            if (lifeRatio <= 0) {
-                // Move to pool for reuse
-                this.particlePool.push(this.particles.splice(i, 1)[0]);
-                this.activeParticles--;
-                continue;
-            }
+            // Update position with velocity
+            p.x += p.vx * fixedDeltaTime * 0.03; // Scale by time delta
+            p.y += p.vy * fixedDeltaTime * 0.03;
             
-            // Simplified physics
-            p.vy += 0.005 * deltaFactor; // Very gentle gravity
+            // Apply gravity with time scaling
+            p.vy += 0.02 * fixedDeltaTime * 0.03;
             
-            // Update position with easing based on life
-            const ease = 0.5 + lifeRatio * 0.5;
-            p.x += p.vx * deltaFactor * ease;
-            p.y += p.vy * deltaFactor * ease;
+            // Update rotation with time scaling
+            p.rotation += p.rotationSpeed * fixedDeltaTime * 0.03;
             
-            // Simple air resistance
-            p.vx *= Math.pow(0.96, deltaFactor);
-            p.vy *= Math.pow(0.96, deltaFactor);
+            // Update opacity with time scaling
+            p.opacity -= p.fadeSpeed * fixedDeltaTime * 0.03;
             
-            // Update visual properties
-            p.opacity = lifeRatio * this.config.opacity;
-            p.size = p.baseSize * (0.6 + 0.4 * lifeRatio);
-            
-            // Remove particles that are off-screen or completely faded
-            if (p.y > this.canvas.height + 50 || 
-                p.x < -50 || 
-                p.x > this.canvas.width + 50 ||
-                p.opacity < 0.01) {
-                this.particlePool.push(this.particles.splice(i, 1)[0]);
-                this.activeParticles--;
+            // Remove dead particles
+            if (p.opacity <= 0.01 || p.life <= 0) {
+                // Reuse the particle object
+                if (this.particlePool.length < this.config.maxParticles * 2) {
+                    this.particlePool.push(this.particles[i]);
+                }
+                this.particles.splice(i, 1);
+            } else {
+                p.life--;
             }
         }
     }
     
     drawParticles() {
-        // Clear the canvas with a semi-transparent background for trail effect
-        this.ctx.globalCompositeOperation = 'source-over';
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        // Skip rendering if we're in the background
+        if (document.hidden) return;
         
-        // Set composite operation for glow effect
-        this.ctx.globalCompositeOperation = 'lighter';
+        // Use requestAnimationFrame timestamp for smooth animation
+        const now = performance.now();
+        const timeSinceLastFrame = now - this.lastFrameTime;
         
-        // Sort particles by opacity for proper blending
-        const sortedParticles = [...this.particles].sort((a, b) => {
-            return (a.opacity - b.opacity);
-        });
+        // Skip frame if we're rendering too fast (cap at 60fps)
+        if (timeSinceLastFrame < 16) return;
+        this.lastFrameTime = now - (timeSinceLastFrame % 16);
+        
+        // Clear only the dirty regions for better performance
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Batch draw calls with similar properties
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
         
         // Draw each particle
-        for (const p of sortedParticles) {
+        const particles = this.particles;
+        const length = particles.length;
+        
+        for (let i = 0; i < length; i++) {
+            const p = particles[i];
+            
+            // Skip if particle is not visible
+            if (p.opacity <= 0.01) continue;
+            
+            // Set common properties
+            this.ctx.globalAlpha = p.opacity * this.config.opacity;
+            
+            // Only set shadow if needed
+            if (this.config.glowIntensity > 0) {
+                this.ctx.shadowColor = p.color;
+                this.ctx.shadowBlur = this.config.glowIntensity * (p.size / 2);
+            } else {
+                this.ctx.shadowColor = 'transparent';
+            }
+            
+            // Set font and color
+            this.ctx.font = `${p.size}px 'Roboto Mono', monospace`;
+            this.ctx.fillStyle = p.color;
+            
+            // Draw with transform for rotation
             this.ctx.save();
             this.ctx.translate(p.x, p.y);
             this.ctx.rotate(p.rotation);
-            
-            // Draw character with glow effect
-            const fontSize = Math.max(1, p.size);
-            const fontFamily = p.char.match(/[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f]/) ? 
-                '"Hiragino Kaku Gothic Pro", Meiryo, sans-serif' : 
-                '"Roboto Mono", monospace';
-                
-            this.ctx.font = `bold ${fontSize}px ${fontFamily}`;
-            this.ctx.textAlign = 'center';
-            this.ctx.textBaseline = 'middle';
-            
-            // Glow effect - more intense for brighter particles
-            const glowIntensity = p.opacity * this.config.glowIntensity * (0.7 + 0.3 * Math.sin(performance.now() * 0.01));
-            this.ctx.shadowColor = p.color;
-            this.ctx.shadowBlur = glowIntensity * 1.5;
-            
-            // Draw the character with gradient
-            const gradient = this.ctx.createLinearGradient(0, -fontSize/2, 0, fontSize/2);
-            gradient.addColorStop(0, this.lightenColor(p.color, 30));
-            gradient.addColorStop(0.5, p.color);
-            gradient.addColorStop(1, this.darkenColor(p.color, 20));
-            
-            // Draw main character
-            this.ctx.fillStyle = gradient;
-            this.ctx.globalAlpha = p.opacity * 0.9;
             this.ctx.fillText(p.char, 0, 0);
-            
-            // Draw a subtle highlight
-            this.ctx.shadowBlur = 0;
-            this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-            this.ctx.globalAlpha = p.opacity * 0.15;
-            this.ctx.fillText(p.char, -1, -1);
-            
-            // Draw a glow behind the character
-            this.ctx.shadowColor = p.color;
-            this.ctx.shadowBlur = glowIntensity * 2;
-            this.ctx.fillStyle = p.color;
-            this.ctx.globalAlpha = p.opacity * 0.3;
-            this.ctx.fillText(p.char, 0, 0);
-            
             this.ctx.restore();
         }
         
-        // Reset composite operation
-        this.ctx.globalCompositeOperation = 'source-over';
+        // Reset shadow to avoid affecting other canvas operations
+        this.ctx.shadowColor = 'transparent';
     }
     
     // Helper function to lighten a color
@@ -322,17 +306,15 @@ class MouseTrail {
     }
     
     animate(timestamp) {
-        // Calculate delta time for smooth animation
+        // Calculate time delta for smooth animation
         if (!this.lastFrameTime) this.lastFrameTime = timestamp;
         const deltaTime = timestamp - this.lastFrameTime;
-        this.lastFrameTime = timestamp;
         
-        // Cap delta time to prevent large jumps
-        const cappedDelta = Math.min(deltaTime, 100);
-        
-        // Update and render with the actual time delta
-        this.updateParticles(cappedDelta);
-        this.drawParticles();
+        // Only update if we have a reasonable delta time (prevents large jumps when tab is inactive)
+        if (deltaTime < 1000) {
+            this.updateParticles(deltaTime);
+            this.drawParticles();
+        }
         
         // Continue animation loop
         this.animationId = requestAnimationFrame(this.animate);
@@ -369,42 +351,53 @@ class MouseTrail {
     }
 }
 
-// Initialize MouseTrail when DOM is loaded
+// Export the MouseTrail class for manual initialization
+window.MouseTrail = MouseTrail;
+
+// Auto-initialize if not explicitly disabled
 document.addEventListener('DOMContentLoaded', () => {
-    // Create and start the mouse trail effect
-    const mouseTrail = new MouseTrail({
-        maxParticles: 120,
-        particleSize: 2.5,
-        baseSpeed: 0.8,
-        maxSpeed: 3.5,
-        trailLength: 40,
-        particleLifetime: 150,
-        spawnRate: 3,
-        opacity: 1.0,
-        fontSize: 16,
-        glowIntensity: 10
-    });
-    
-    // Handle page visibility changes
-    const handleVisibilityChange = () => {
-        if (document.hidden) {
-            mouseTrail.stop();
-        } else {
-            mouseTrail.start();
-        }
-    };
-    
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    
-    // Cleanup function
-    const cleanup = () => {
-        mouseTrail.destroy();
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
-        window.removeEventListener('beforeunload', cleanup);
-    };
-    
-    window.addEventListener('beforeunload', cleanup);
-    
-    // Expose to window for debugging if needed
-    window.mouseTrail = mouseTrail;
+    // Only initialize if not already initialized
+    if (!window.mouseTrail) {
+        const mouseTrail = new MouseTrail({
+            maxParticles: 50,
+            particleSize: 14,
+            colors: ['#00ff41', '#00cc33', '#00aa33'],
+            baseSpeed: 0.6,
+            maxSpeed: 2.5,
+            trailLength: 20,
+            particleLifetime: 60,
+            spawnRate: 1,
+            opacity: 0.7,
+            glowIntensity: 8,
+            fontSize: 14
+        });
+        
+        // Handle page visibility changes
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                mouseTrail.stop();
+            } else {
+                mouseTrail.start();
+            }
+        };
+        
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        
+        // Cleanup function
+        const cleanup = () => {
+            mouseTrail.destroy();
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('beforeunload', cleanup);
+        };
+        
+        window.addEventListener('beforeunload', cleanup);
+        
+        // Expose to window for debugging
+        window.mouseTrail = mouseTrail;
+    }
 });
+
+// Export for Node.js/CommonJS
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { MouseTrail };
+}

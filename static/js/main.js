@@ -208,48 +208,26 @@ if (document.readyState === 'loading') {
     init();
 }
 
-    // Mobile menu toggle (if you add a mobile menu later)
-    const menuToggle = document.querySelector('.menu-toggle');
-    const nav = document.querySelector('nav');
+// Mobile menu toggle (if you add a mobile menu later)
+const menuToggle = document.querySelector('.menu-toggle');
+const nav = document.querySelector('nav');
     
-    if (menuToggle && nav) {
-        menuToggle.addEventListener('click', () => {
-            nav.classList.toggle('active');
-            menuToggle.classList.toggle('active');
-        });
-    }
+if (menuToggle && nav) {
+    menuToggle.addEventListener('click', () => {
+        nav.classList.toggle('active');
+        menuToggle.classList.toggle('active');
+    });
+}
 
-    // Form submission handling (if you add a contact form later)
-    const contactForm = document.getElementById('contact-form');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Add form submission logic here
-            alert('Thank you for your message! I will get back to you soon.');
-            this.reset();
-        });
-    }
-});
-
-// Add a simple typewriter effect for the hero subtitle
-function initTypewriter() {
-    const subtitle = document.querySelector('.hero .subtitle');
-    if (!subtitle) return;
-    
-    const text = subtitle.textContent;
-    subtitle.textContent = '';
-    let i = 0;
-    
-    function typeWriter() {
-        if (i < text.length) {
-            subtitle.textContent += text.charAt(i);
-            i++;
-            setTimeout(typeWriter, 50);
-        }
-    }
-    
-    // Start the typewriter effect after a short delay
-    setTimeout(typeWriter, 1000);
+// Form submission handling (if you add a contact form later)
+const contactForm = document.getElementById('contact-form');
+if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Add form submission logic here
+        alert('Thank you for your message! I will get back to you soon.');
+        this.reset();
+    });
 }
 
 // Initialize typewriter effect when the page loads

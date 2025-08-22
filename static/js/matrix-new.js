@@ -11,17 +11,17 @@ class MatrixRain {
             // Font size in pixels
             fontSize: 18,
             // Animation speed (higher = faster)
-            speed: 30,
+            speed: 20,
             // Density of the rain (0-1)
-            density: 0.8,
+            density: 0.5,
             // Minimum number of drops
-            minDrops: 20,
+            minDrops: 15,
             // Maximum number of drops
-            maxDrops: 80,
+            maxDrops: 50,
             // Colors for the matrix effect
-            colors: ['#00ff41', '#00cc33', '#009900', '#00cc44'],
+            colors: ['#00ff41', '#00cc33', '#00aa33'],
             // Fade effect speed (0-1)
-            fadeFactor: 0.08,
+            fadeFactor: 0.05,
             // Merge with user options
             ...options
         };
@@ -38,6 +38,7 @@ class MatrixRain {
         this.lastTime = 0;
         this.columns = 0;
         this.columnWidth = 0;
+        this.columnPositions = []; // Initialize columnPositions array
 
         // Initialize
         this.setupCanvas();
@@ -66,15 +67,23 @@ class MatrixRain {
         this.ctx.font = `${this.config.fontSize}px monospace`;
         this.ctx.textAlign = 'center';
         
-        // Calculate number of columns
+        // Calculate number of columns (increased by 50%)
         this.columnWidth = this.config.fontSize * 0.8;
-        this.columns = Math.min(
-            Math.max(
-                Math.floor((this.width / this.columnWidth) * this.config.density),
-                this.config.minDrops
-            ),
-            this.config.maxDrops
+        const baseColumns = Math.floor(this.width / this.columnWidth);
+        const targetColumns = Math.floor(baseColumns * this.config.density * 1.5); // 50% more columns
+        
+        // Ensure columns stay within min/max bounds
+        this.columns = Math.max(
+            this.config.minDrops,
+            Math.min(Math.ceil(targetColumns), this.config.maxDrops)
         );
+        
+        // Pre-calculate column positions
+        this.columnPositions = [];
+        const spacing = this.width / this.columns;
+        for (let i = 0; i < this.columns; i++) {
+            this.columnPositions.push(i * spacing + (Math.random() * spacing * 0.5));
+        }
     }
 
     /**
@@ -197,6 +206,14 @@ class MatrixRain {
     getRandomChar() {
         return this.config.charset[Math.floor(Math.random() * this.config.charset.length)];
     }
+    
+    /**
+     * Get a random color from the configured colors array
+     * @returns {string} A random color from the colors array
+     */
+    getRandomColor() {
+        return this.config.colors[Math.floor(Math.random() * this.config.colors.length)];
+    }
 
     /**
      * Set up event listeners
@@ -261,55 +278,27 @@ class MatrixRain {
     }
 }
 
-// Initialize the matrix effect when the DOM is loaded
-function initMatrix() {
-    // Create container if it doesn't exist
-    let container = document.getElementById('matrix-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'matrix-container';
-        document.body.insertBefore(container, document.body.firstChild);
+// Export the MatrixRain class for manual initialization
+window.MatrixRain = MatrixRain;
+
+// Auto-initialize if container exists and auto-init is not explicitly disabled
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('matrix-container');
+    if (container && container.getAttribute('data-auto-init') !== 'false') {
+        window.matrixEffect = new MatrixRain('matrix-container', {
+            charset: '01',
+            fontSize: 20,
+            speed: 20,
+            density: 0.5,
+            minDrops: 15,
+            maxDrops: 50,
+            colors: ['#00ff41', '#00cc33', '#00aa33'],
+            fadeFactor: 0.05
+        });
     }
+});
 
-    // Set container styles
-    Object.assign(container.style, {
-        position: 'fixed',
-        top: '0',
-        left: '0',
-        width: '100vw',
-        height: '100vh',
-        zIndex: '-1',
-        overflow: 'hidden',
-        pointerEvents: 'none', // Allow clicks to pass through
-        margin: '0',
-        padding: '0'
-    });
-
-    // Initialize the matrix effect with full width settings
-    const matrix = new MatrixRain('matrix-container', {
-        charset: '01',
-        fontSize: 20,
-        speed: 25,
-        density: 0.7,
-        minDrops: 30,
-        maxDrops: 100,
-        colors: ['#00ff41', '#00ff88', '#00cc66', '#00aa55'],
-        fadeFactor: 0.1
-    });
-
-    // Return cleanup function
-    return () => matrix.destroy();
-}
-
-// Start the animation when the page loads
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMatrix);
-} else {
-    // If the document is already loaded, initialize immediately
-    initMatrix();
-}
-
-// Export for testing
+// Export for Node.js/CommonJS
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { MatrixRain };
 }
