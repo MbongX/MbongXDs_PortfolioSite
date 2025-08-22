@@ -30,7 +30,20 @@ jobs:
       - name: Build with Node.js
         run: |
           node build.js
-          ls -la build/  # Debug: List build directory contents
+          # Create the static directory structure
+          mkdir -p build/static/{css,js,images,fonts}
+          
+          # Copy all static files
+          cp -r static/* build/static/
+          
+          # Copy root files
+          cp index.html build/
+          cp 404.html build/
+          cp robots.txt build/
+          
+          # Debug: List build directory contents
+          echo "Build directory structure:"
+          find build -type f | sort
           
       - name: Verify Build Output
         run: |
@@ -39,8 +52,8 @@ jobs:
             echo "::error::index.html not found in build directory"
             exit 1
           fi
-          if [ ! -d "build/static" ]; then
-            echo "::error::static directory not found in build directory"
+          if [ ! -f "build/static/css/style.css" ]; then
+            echo "::error::style.css not found in build/static/css/"
             exit 1
           fi
           echo "Build verification passed!"
@@ -52,8 +65,8 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "build"  # Changed from "." to "build"
-          output_location: "."    # Changed from "build" to "."
+          app_location: "build"
+          output_location: "."
           skip_app_build: true
           skip_api_build: true
 

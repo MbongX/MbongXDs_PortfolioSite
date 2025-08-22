@@ -1,13 +1,25 @@
 {
+  "mimeTypes": {
+    ".css": "text/css",
+    ".js": "application/javascript",
+    ".json": "application/json",
+    ".html": "text/html",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".gif": "image/gif",
+    ".svg": "image/svg+xml",
+    ".woff": "font/woff",
+    ".woff2": "font/woff2",
+    ".ttf": "font/ttf",
+    ".eot": "application/vnd.ms-fontobject"
+  },
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": [
       "/static/*",
       "/*.{css,scss,js,png,jpg,jpeg,gif,ico,svg,woff,woff2,ttf,eot,map}"
     ]
-  },
-  "mimeTypes": {
-    ".json": "application/json"
   },
   "responseOverrides": {
     "400": {
@@ -37,9 +49,16 @@
     {
       "route": "/*",
       "headers": {
-        "Cache-Control": "no-cache, no-store, must-revalidate"
+        "Content-Type": "text/html; charset=utf-8"
       },
       "rewrite": "/index.html"
+    },
+    {
+      "route": "/index.html",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Content-Type": "text/html; charset=utf-8"
+      }
     }
   ]
 }
