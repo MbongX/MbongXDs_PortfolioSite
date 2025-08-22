@@ -1055,9 +1055,11 @@ textarea.form-control {
         text-decoration: none !important;
         color: black !important;
     }
-}
-    padding: 8px 20px;
-    font-size: 0.9rem;
+    
+    .some-element {
+        padding: 8px 20px;
+        font-size: 0.9rem;
+    }
 }
 
 /* Hero Section */

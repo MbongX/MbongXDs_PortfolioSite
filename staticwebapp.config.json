@@ -37,15 +37,9 @@
     {
       "route": "/*",
       "headers": {
-        "Cache-Control": "no-cache"
+        "Cache-Control": "no-cache, no-store, must-revalidate"
       },
       "rewrite": "/index.html"
-    },
-    {
-      "route": "/index.html",
-      "headers": {
-        "Cache-Control": "no-cache, no-store, must-revalidate"
-      }
     }
   ]
 }
