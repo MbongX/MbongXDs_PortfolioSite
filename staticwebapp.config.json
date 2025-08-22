@@ -1,27 +1,50 @@
 {
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/static/*", "/*.{css,scss,js,png,jpg,jpeg,gif,ico,svg,woff,woff2,ttf,eot}"]
+    "exclude": [
+      "/static/*",
+      "/*.{css,scss,js,png,jpg,jpeg,gif,ico,svg,woff,woff2,ttf,eot,map}"
+    ]
   },
   "mimeTypes": {
-    ".json": "text/json"
+    ".json": "application/json"
   },
   "responseOverrides": {
+    "400": {
+      "rewrite": "/index.html",
+      "statusCode": 200
+    },
+    "401": {
+      "statusCode": 302,
+      "redirect": "/"
+    },
+    "403": {
+      "rewrite": "/index.html",
+      "statusCode": 200
+    },
     "404": {
-      "rewrite": "/404.html"
+      "rewrite": "/index.html",
+      "statusCode": 200
     }
   },
   "routes": [
     {
       "route": "/static/*",
       "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
+        "Cache-Control": "public, max-age=31536000, immutable"
       }
     },
     {
       "route": "/*",
       "headers": {
-        "cache-control": "public, max-age=0, s-maxage=86400, must-revalidate"
+        "Cache-Control": "no-cache"
+      },
+      "rewrite": "/index.html"
+    },
+    {
+      "route": "/index.html",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate"
       }
     }
   ]
