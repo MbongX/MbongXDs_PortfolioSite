@@ -1,30 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
+    <!-- Primary Meta Tags -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mbongeni Mahlangu | Portfolio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Portfolio of Mbongeni Mahlangu - Software Developer & Creative Technologist">
+    <meta name="keywords" content="portfolio, developer, software engineer, web development, programming">
+    <meta name="author" content="Mbongeni Mahlangu">
+    <meta name="theme-color" content="#00ff41">
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="Mbongeni Mahlangu | Portfolio">
+    <meta property="og:description" content="Software Developer & Creative Technologist">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourportfolio.com">
+    <meta property="og:image" content="{{ url_for('static', filename='img/og-image.jpg') }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/apple-touch-icon.png') }}">
+    
+    <!-- Main Stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <!-- Matrix Background Container -->
-    <div id="matrix-container"></div>
     
-    <!-- Mouse Trail Canvas (will be created by mouse-trail.js) -->
+    <!-- Preconnect to External Domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     
-    <!-- Main Content -->
-    <div class="content">
-        {% block content %}{% endblock %}
-    </div>
+    <!-- External Stylesheets with Fallbacks -->
+    <link rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" 
+          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" 
+          crossorigin="anonymous" 
+          referrerpolicy="no-referrer" 
+          media="print" 
+          onload="this.media='all'" />
     
-    <!-- Scripts -->
-    <script src="{{ url_for('static', filename='js/matrix-new.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/mouse-trail-new.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/project-modal.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-
+    <link rel="stylesheet" 
+          href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" 
+          media="print" 
+          onload="this.media='all'" />
+    
+    <title>Mbongeni Mahlangu | Software Developer & Creative Technologist</title>
+    
     <style>
         /* Ensure the matrix container covers the full viewport */
         #matrix-container {
@@ -33,59 +52,114 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* Behind other content */
-            pointer-events: none; /* Allow clicks to pass through */
-            opacity: 0.3; /* Make it more subtle */
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.3;
+            will-change: transform, opacity;
         }
         
         /* Make sure content is above the matrix background */
         .content {
             position: relative;
             z-index: 1;
-            background-color: rgba(0, 0, 0, 0.7); /* Slightly dark background for better readability */
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        /* Basic layout for no-js fallback */
+        .no-js .content {
+            background-color: #0a0a0a;
         }
     </style>
+</head>
+<body>
+    <!-- No JavaScript Fallback -->
+    <noscript>
+        <div class="no-js">
+            <p>This website works best with JavaScript enabled. Please enable JavaScript to continue.</p>
+        </div>
+    </noscript>
+
+    <!-- Matrix Background Container -->
+    <div id="matrix-container" aria-hidden="true"></div>
     
+    <!-- Main Content -->
+    <main class="content" role="main">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Performance Monitoring -->
     <script>
-        // Initialize components when DOM is ready
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM fully loaded, initializing components...');
-            
-            // Check if required elements exist
-            const matrixContainer = document.getElementById('matrix-container');
-            if (!matrixContainer) {
-                console.error('Matrix container not found!');
-            } else {
-                console.log('Matrix container found:', matrixContainer);
-                // Initialize Matrix effect with optimized settings
-                console.log('Initializing Matrix effect...');
-                window.matrixEffect = new MatrixRain('matrix-container', {
-                    charset: '01',
-                    fontSize: 20,
-                    speed: 20,
-                    density: 0.5,
-                    minDrops: 15,
-                    maxDrops: 50,
-                    colors: ['#00ff41', '#00cc33', '#00aa33'],
-                    fadeFactor: 0.05
-                });
+        // Log performance metrics
+        window.addEventListener('load', () => {
+            if (window.performance) {
+                const timing = performance.timing;
+                const loadTime = timing.loadEventEnd - timing.navigationStart;
+                console.log(`Page loaded in ${loadTime}ms`);
                 
-                // Initialize Mouse Trail with optimized settings for smooth performance
-                const mouseTrail = new MouseTrail({
-                    maxParticles: 30,           // Reduced from 50 to 30 for better performance
-                    particleSize: 12,           // Slightly smaller particles
-                    colors: ['#00ff41', '#00cc33'], // Reduced color variations
-                    baseSpeed: 0.8,             // Slightly faster base speed
-                    maxSpeed: 3.0,              // Increased max speed
-                    trailLength: 15,            // Shorter trail for better performance
-                    particleLifetime: 45,        // Shorter lifetime for snappier feel
-                    spawnRate: 2,               // More frequent spawning for smoother trail
-                    opacity: 0.8,               // Slightly more visible
-                    glowIntensity: 6,           // Reduced glow for better performance
-                    fontSize: 12                 // Smaller font size for better performance
-                });
+                // Send to analytics if available
+                if (window.gtag) {
+                    gtag('event', 'timing_complete', {
+                        'name': 'page_load',
+                        'value': loadTime,
+                        'event_category': 'Page Load'
+                    });
+                }
+            }
+        });
+        
+        // Load scripts with feature detection
+        function loadScript(src, { async = true, defer = true } = {}) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.async = async;
+                script.defer = defer;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.body.appendChild(script);
+            });
+        }
+
+        // Initialize when DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Load scripts in order
+                await loadScript("{{ url_for('static', filename='js/matrix-new.js') }}");
+                await loadScript("{{ url_for('static', filename='js/mouse-trail-new.js') }}");
+                await loadScript("{{ url_for('static', filename='js/project-modal.js') }}");
+                await loadScript("{{ url_for('static', filename='js/main.js') }}");
                 
-                // Initialize Project Modals if available
+                // Initialize components if they exist
+                if (typeof MatrixRain === 'function') {
+                    window.matrixEffect = new MatrixRain('matrix-container', {
+                        charset: '01',
+                        fontSize: 20,
+                        speed: 20,
+                        density: 0.5,
+                        minDrops: 15,
+                        maxDrops: 50,
+                        colors: ['#00ff41', '#00cc33', '#00aa33'],
+                        fadeFactor: 0.05
+                    });
+                }
+                
+                if (typeof MouseTrail === 'function') {
+                    window.mouseTrail = new MouseTrail({
+                        maxParticles: 30,
+                        particleSize: 12,
+                        colors: ['#00ff41', '#00cc33'],
+                        baseSpeed: 0.8,
+                        maxSpeed: 3.0,
+                        trailLength: 15,
+                        particleLifetime: 45,
+                        spawnRate: 2,
+                        opacity: 0.8,
+                        glowIntensity: 6,
+                        fontSize: 12
+                    });
+                }
+                
+                // Initialize project modals if available
                 if (typeof initProjectModals === 'function') {
                     try {
                         initProjectModals();
@@ -95,21 +169,24 @@
                     }
                 }
                 
-                // Cleanup on page unload
-                window.addEventListener('beforeunload', function() {
-                    if (window.matrixEffect && typeof window.matrixEffect.destroy === 'function') {
-                        window.matrixEffect.destroy();
-                    }
-                    if (mouseTrail && typeof mouseTrail.destroy === 'function') {
-                        mouseTrail.destroy();
-                    }
-                });
+                // Set up cleanup on page unload
+                const cleanup = () => {
+                    if (window.matrixEffect?.destroy) window.matrixEffect.destroy();
+                    if (window.mouseTrail?.destroy) window.mouseTrail.destroy();
+                    window.removeEventListener('beforeunload', cleanup);
+                    window.removeEventListener('pagehide', cleanup);
+                };
                 
-                // Expose for debugging
-                window.matrixEffect = window.matrixEffect || matrixEffect;
-                window.mouseTrail = mouseTrail;
-            } // Close the else block
-        }); // Close the DOMContentLoaded event listener
+                window.addEventListener('beforeunload', cleanup);
+                window.addEventListener('pagehide', cleanup);
+                
+                // Add loaded class for CSS transitions
+                document.documentElement.classList.add('js-loaded');
+                
+            } catch (error) {
+                console.error('Error initializing scripts:', error);
+            }
+        }, { once: true });
     </script>
 </body>
 </html>
