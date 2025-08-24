@@ -1656,18 +1656,102 @@ footer {
 }
 
 /* ==========================================================================
+   #RESPONSIVE ENHANCEMENTS
+   ========================================================================== */
+/* Large tablets / small desktops */
+@media (max-width: 1200px) {
+    .container {
+        max-width: 1000px;
+        padding-left: calc(var(--spacing-md));
+        padding-right: calc(var(--spacing-md));
+    }
+}
+
+/* Tablets */
+@media (max-width: 992px) {
+    .container {
+        width: 100%;
+        padding-left: var(--spacing-md);
+        padding-right: var(--spacing-md);
+    }
+
+    .section {
+        padding: var(--spacing-lg) 0;
+    }
+
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .about-content,
+    .experience-list {
+        gap: var(--spacing-md);
+    }
+}
+
+/* Phones (landscape and portrait) */
+@media (max-width: 768px) {
+    html { font-size: 15px; }
+
+    h1 { font-size: 2.25rem; }
+    h2.section-title { font-size: 1.8rem; }
+
+    .hero .container { text-align: center; }
+    .cta-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        align-items: stretch;
+        max-width: 420px;
+        margin: 0 auto;
+    }
+
+    .btn { width: 100%; }
+
+    .projects-grid { grid-template-columns: 1fr; }
+
+    .about-content, .experience-list, .contact-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+
+    .timeline-item { width: 100%; left: 0 !important; }
+
+    .container {
+        margin: var(--spacing-md) auto;
+        padding: var(--spacing-md);
+    }
+
+    .social-links { gap: 1rem; }
+}
+
+/* Small phones */
+@media (max-width: 576px) {
+    html { font-size: 14px; }
+    h1 { font-size: 1.9rem; }
+    h2.section-title { font-size: 1.6rem; }
+
+    .container { padding: var(--spacing-sm); }
+
+    .projects-grid { gap: var(--spacing-md); }
+
+    footer .container p { font-size: 0.9rem; text-align: center; }
+}
+
+/* ==========================================================================
    #UTILITY OVERRIDES
    ========================================================================== */
 
-/* Force remove all text glow and shadows from glitch effect */
-.glitch, .glitch::before, .glitch::after {
-    text-shadow: none !important;
-}
+ /* Force remove all text glow and shadows from glitch effect */
+ .glitch, .glitch::before, .glitch::after {
+     text-shadow: none !important;
+ }
 
-/* Final global safeguard: remove any paragraph text glow site-wide */
-p, li, a, span, h1, h2, h3, h4, h5, h6 {
-    text-shadow: none !important;
-    box-shadow: none !important;
-    filter: none !important;
-    -webkit-text-stroke: 0 !important;
-}
+ /* Final global safeguard: remove any paragraph text glow site-wide */
+ p, li, a, span, h1, h2, h3, h4, h5, h6 {
+     text-shadow: none !important;
+     box-shadow: none !important;
+     filter: none !important;
+     -webkit-text-stroke: 0 !important;
+ }
