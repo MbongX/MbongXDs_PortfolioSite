@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found | Mbongeni Mahlangu</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .error-code {
+            font-size: 6rem;
+            font-weight: bold;
+            color: #00ff41;
+            margin: 0;
+            line-height: 1;
+        }
+        
+        .error-message {
+            font-size: 1.5rem;
+            margin: 1rem 0 2rem;
+            color: #e0e0e0;
+        }
+        
+        .home-link {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: #00ff41;
+            color: #0a0a0a;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .home-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 255, 65, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="matrix-container"></div>
+    
+    <div class="error-container">
+        <h1 class="error-code">404</h1>
+        <p class="error-message">Oops! The page you're looking for doesn't exist.</p>
+        <a href="/" class="home-link">Return to Home</a>
+    </div>
+    
+    <script src="/static/js/matrix.js"></script>
+    <script>
+        // Initialize matrix background
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof MatrixRain === 'function') {
+                new MatrixRain('matrix-container', {
+                    charset: '01',
+                    fontSize: 20,
+                    speed: 20,
+                    density: 0.3,
+                    minDrops: 10,
+                    maxDrops: 30,
+                    colors: ['#00ff41'],
+                    fadeFactor: 0.05
+                });
+            }
+        });
+    </script>
+</body>
+</html>
