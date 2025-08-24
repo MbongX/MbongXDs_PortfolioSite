@@ -2,30 +2,33 @@
   "name": "portfolio-website",
   "version": "1.0.0",
   "description": "Portfolio website for Mbongeni Mahlangu",
+  "main": "api/index.js",
   "scripts": {
+    "build": "npm run clean && npm run copy:assets && npm run minify:css && npm run minify:js",
     "clean": "rimraf build",
-    "copy:assets": "cpx \"static/**/*\" \"build/static\"",
-    "copy:root": "cpx \"{index.html,404.html,favicon.ico,robots.txt,sitemap.xml}\" \"build\"",
-    "copy:templates": "cpx \"templates/**/*\" \"build/templates\"",
-    "minify:css": "cleancss -o build/static/css/style.min.css static/css/style.css",
-    "minify:js": "terser static/js/*.js -c -m -o build/static/js/app.min.js --source-map",
-    "build": "npm run clean && npm run copy:assets && npm run copy:root && npm run copy:templates && npm run minify:css && npm run minify:js",
-    "start": "python app.py",
+    "copy:assets": "cpx \"static/**/*\" \"public/static\" && cpx \"public/index.html\" \"public\"",
+    "minify:css": "cleancss -o public/static/css/style.min.css static/css/style.css",
+    "minify:js": "node scripts/build.js",
     "test": "echo \"No tests specified\" && exit 0"
+  },
+  "dependencies": {
+    "@azure/functions": "^3.5.1",
+    "express": "^4.18.2"
   },
   "devDependencies": {
     "clean-css-cli": "^5.6.1",
     "cpx": "^1.5.0",
+    "nodemon": "^3.0.1",
     "rimraf": "^5.0.1",
     "terser": "^5.15.1"
   },
   "engines": {
-    "node": ">=14.0.0",
-    "npm": ">=6.0.0"
+    "node": "18.x",
+    "npm": ">=8.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/portfolio.git"
+    "url": "https://github.com/MbongX/MbongXDs_PortfolioSite.git"
   },
   "keywords": [
     "portfolio",

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Mbongeni Mahlangu</title>
+    <link rel="stylesheet" href="/static/css/style.min.css?v=20250823T180623">
+    <link rel="stylesheet" href="/static/css/matrix.css?v=20250823T180623">
+    <style>
+        /* Global hard kill for any text glow/shadow/filters */
+        *, *::before, *::after {
+            text-shadow: none !important;
+            filter: none !important; /* covers drop-shadow/filter-based glows */
+            box-shadow: none !important; /* remove any visual glow via box-shadow */
+        }
+        /* Keep text glow disabled globally; allow glitch animations */
+        .glitch, .glitch::before, .glitch::after {
+            text-shadow: none !important;
+            mix-blend-mode: normal !important;
+        }
+        /* Extra safety for headings */
+        h1, h2, h3, h4, h5, h6 {
+            text-shadow: none !important;
+            -webkit-text-stroke-width: 0 !important;
+            -webkit-text-stroke-color: currentColor !important;
+        }
+    </style>
+    <!-- Load scripts without defer to ensure proper initialization order -->
+    <script>
+        // Mouse trail is disabled
+        function initializeMouseTrail() {
+            console.log('Mouse trail is disabled');
+            // No operation - mouse trail is disabled
+        }
+
+        // Main initialization function
+        function initializePortfolio() {
+            console.log('Initializing portfolio...');
+            initializeMouseTrail();
+            document.body.classList.add('portfolio-loaded');
+        }
+
+        // Load scripts in sequence
+        const loadScript = (src) => {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        };
+
+        // Load scripts in order
+        if (!window.portfolioScriptsLoaded) {
+            window.portfolioScriptsLoaded = true;
+            
+            // Load remaining scripts (mouse trail disabled)
+            Promise.all([
+                // loadScript('/static/js/mouse-trail.min.js'),  // Disabled
+                loadScript('/static/js/project-modal.min.js'),
+                loadScript('/static/js/main.min.js')
+            ]).then(() => {
+                console.log('All scripts loaded successfully');
+                initializePortfolio();
+            }).catch(error => {
+                console.error('Error loading scripts:', error);
+            });
+        }
+    </script>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data:; font-src 'self' data: https:; img-src 'self' data: https:;">
+</head>
+<body>
+    <!-- Matrix Background Container -->
+    <div id="matrix-bg">
+        <canvas id="matrix-canvas"></canvas>
+    </div>
+    
+    <script>
+    (function() {
+        'use strict';
+        
+        console.log('Initializing Matrix effect...');
+        
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+        
+        // Configuration
+        const config = {
+            chars: '01',
+            fontSize: 16,
+            fontFamily: 'monospace',
+            color: '#00ff41',
+            fadeSpeed: 0.03,
+            speed: 1.2,
+            density: 1.2
+        };
+        
+        // State
+        let animationId;
+        let lastTime = 0;
+        let columns = 0;
+        let drops = [];
+        
+        // Initialize canvas
+        function init() {
+            // Set initial canvas styles
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.zIndex = '-1';
+            canvas.style.opacity = '0.15';
+            
+            resize();
+            window.addEventListener('resize', debounce(resize, 100));
+            window.addEventListener('visibilitychange', handleVisibilityChange);
+            
+            // Start animation
+            animate(0);
+        }
+        
+        // Handle tab visibility changes
+        function handleVisibilityChange() {
+            if (document.hidden) {
+                cancelAnimationFrame(animationId);
+            } else {
+                lastTime = 0;
+                animate(0);
+            }
+        }
+        
+        // Debounce function for resize events
+        function debounce(func, wait) {
+            let timeout;
+            return function() {
+                const context = this, args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), wait);
+            };
+        }
+        
+        // Handle window resize
+        function resize() {
+            const dpr = window.devicePixelRatio || 1;
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            // Set canvas size with device pixel ratio for crisp rendering
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            ctx.scale(dpr, dpr);
+            
+            // Adjust canvas display size
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+            
+            // Calculate number of columns based on font size and density
+            columns = Math.floor((width * config.density) / config.fontSize);
+            
+            // Initialize drops
+            drops = [];
+            for (let i = 0; i < columns; i++) {
+                drops[i] = Math.random() * -100; // Start drops at random positions
+            }
+            
+            // Set font
+            ctx.font = `${config.fontSize}px ${config.fontFamily}`;
+        }
+        
+        // Animation loop
+        function animate(timestamp) {
+            if (!lastTime) lastTime = timestamp;
+            const deltaTime = timestamp - lastTime;
+            lastTime = timestamp;
+            
+            // Clear with semi-transparent black for trail effect
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Set text style
+            ctx.fillStyle = config.color;
+            
+            // Draw characters
+            for (let i = 0; i < drops.length; i++) {
+                // Pick a random character
+                const text = config.chars[Math.floor(Math.random() * config.chars.length)];
+                
+                // Calculate position
+                const x = i * (config.fontSize / config.density);
+                const y = drops[i] * config.fontSize;
+                
+                // Only draw if character is visible
+                if (y > 0 && y < canvas.height + config.fontSize) {
+                    // Fade effect for characters
+                    const alpha = Math.min(1, (y / (canvas.height * 0.5)) * 0.8);
+                    ctx.globalAlpha = alpha;
+                    ctx.fillText(text, x, y);
+                    ctx.globalAlpha = 1;
+                }
+                
+                // Move drop down with smooth acceleration
+                const speed = config.speed * (1 + (drops[i] / canvas.height) * 2);
+                drops[i] += speed * (deltaTime / 16);
+                
+                // Reset drop to top when it reaches the bottom
+                if (drops[i] * config.fontSize > canvas.height + config.fontSize * 2) {
+                    if (Math.random() > 0.98) {
+                        drops[i] = 0;
+                    }
+                }
+            }
+            
+            // Continue animation
+            animationId = requestAnimationFrame(animate);
+        }
+        
+        // Clean up on unmount
+        function cleanup() {
+            cancelAnimationFrame(animationId);
+            window.removeEventListener('resize', resize);
+            window.removeEventListener('visibilitychange', handleVisibilityChange);
+        }
+        
+        // Wait for DOM to be fully loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            // Start the effect
+            init();
+        }
+        
+        // Clean up if needed (e.g., for single-page apps)
+        window.addEventListener('beforeunload', cleanup);
+        
+        console.log('Matrix effect initialized');
+    })();
+    </script>
+    
+    <!-- Main Content -->
+    <div id="app" style="position: relative; z-index: 1000; opacity: 1 !important; visibility: visible !important; background-color: transparent;">
+        <main style="position: relative; z-index: 1001;">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="container">
+                    <h1 class="glitch" data-text="Mbongeni Mahlangu">Mbongeni Mahlangu</h1>
+                    <h2 class="subtitle">Software Developer/Engineer | Automation Engineer (RPA)</h2>
+                    <div class="cta-buttons">
+                        <a href="#projects" class="btn">View My Work</a>
+                        <a href="#contact" class="btn btn-outline">Contact Me</a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="about" class="section">
+                <div class="container">
+                    <h2 class="section-title">About Me</h2>
+                    <div class="about-content">
+                        <p>I engineer systems, not just features. With 2+ years driving RPA, testing, and full‑stack projects end‑to‑end, I specialize in owning complex technical challenges — from architecture to deployment. My toolkit spans Blue Prism RPA, QA/testing, and development across Python, C++, C#, and Java (web, Windows, Android). I connect design, code, and operations into resilient, user‑aligned solutions.</p>
+                        <p>Why me? Ownership obsession, pressure‑tested quality, and a polymathic edge. I dissect architectures, ask hard questions early, and ship self‑contained systems. Seeking roles demanding autonomous technical ownership: Software Development, RPA Engineering, Solution Architecture, or QA.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="projects" class="section">
+                <div class="container">
+                    <h2 class="section-title">Featured Projects</h2>
+                    <div class="projects-grid">
+                        <!-- Dreed Prototype -->
+                        <div class="project-card" 
+                             data-title="Dreed Prototype"
+                             data-description="A financial investment system focused on advanced strategies, secure database management, and credential security using Python and Azure (Azure SQL, Key Vault). Emphasizes reliability via tests, scalable design, and future AI integration."
+                             data-technologies='["Python", "Azure SQL", "Azure Key Vault", "Testing", "Security"]'
+                             data-project-url="#"
+                             data-code-url="#">
+                            <div class="project-content">
+                                <h3>Dreed Prototype</h3>
+                                <p class="date">Dec 2024 – Present</p>
+                                <p>Hands‑on Python project building a secure, scalable investment system with strategy testing, Azure SQL, and Key Vault for credential management.</p>
+                                <ul class="project-tech">
+                                    <li>Python</li>
+                                    <li>Azure SQL</li>
+                                    <li>Azure Key Vault</li>
+                                    <li>Testing</li>
+                                    <li>Security</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Youth Jobs Portal -->
+                        <div class="project-card"
+                             data-title="Youth Jobs Portal"
+                             data-description="A Flask web app connecting job seekers with employers: secure auth, role‑based dashboards, resume builder with PDF, messaging, and notifications."
+                             data-technologies='["Python", "Flask", "SQLite", "Bootstrap", "Flask-Login", "Flask-Mail"]'
+                             data-project-url="#"
+                             data-code-url="#">
+                            <div class="project-content">
+                                <h3>Youth Jobs Portal</h3>
+                                <p class="date">Jan 2025</p>
+                                <p>Secure role‑based job portal with authentication, resume builder, messaging, and alerts — built with Flask and Bootstrap.</p>
+                                <ul class="project-tech">
+                                    <li>Python</li>
+                                    <li>Flask</li>
+                                    <li>SQLite</li>
+                                    <li>Bootstrap</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Student Management System -->
+                        <div class="project-card"
+                             data-title="Student Management System"
+                             data-description="Java application for managing students, courses, and admin tasks with secure auth and RBAC. Led a team of 4, designed DB, optimized queries (–40% response time), and implemented CI/CD."
+                             data-technologies='["Java", "JDBC", "SQL", "OOP", "CI/CD"]'
+                             data-project-url="#"
+                             data-code-url="#">
+                            <div class="project-content">
+                                <h3>Student Management System</h3>
+                                <p class="date">May 2024</p>
+                                <p>Robust Java system with authentication, database design, and role‑based access control; delivered with strong documentation and testing.</p>
+                                <ul class="project-tech">
+                                    <li>Java</li>
+                                    <li>JDBC</li>
+                                    <li>SQL</li>
+                                    <li>OOP</li>
+                                    <li>CI/CD</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Banking System for Students (iBSB) -->
+                        <div class="project-card"
+                             data-title="Interactive Banking System for Students (iBSB)"
+                             data-description="Full banking management system for students with secure auth, admin dashboard, and RESTful APIs. Built with ASP.NET Core and SQL Server."
+                             data-technologies='["C#", "ASP.NET Core MVC", "SQL Server", "Entity Framework", "REST API"]'
+                             data-project-url="#"
+                             data-code-url="#">
+                            <div class="project-content">
+                                <h3>Interactive Banking System for Students (iBSB)</h3>
+                                <p class="date">Apr 2023</p>
+                                <p>Secure student banking platform with admin controls and API‑driven backend; deployed with strong data protection and identity controls.</p>
+                                <ul class="project-tech">
+                                    <li>C#</li>
+                                    <li>ASP.NET Core</li>
+                                    <li>SQL Server</li>
+                                    <li>Entity Framework</li>
+                                    <li>REST API</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Student Review & Tutoring System -->
+                        <div class="project-card"
+                             data-title="Student Review & Tutoring System"
+                             data-description="WinForms app enabling lecturer reviews and peer tutoring. Built with C#/.NET, includes DB design, intuitive UI, and comprehensive testing."
+                             data-technologies='["C#", ".NET Framework", "WinForms", "SQL", "UI/U444X"]'
+                             data-project-url="#"
+                             data-code-url="#">
+                            <div class="project-content">
+                                <h3>Student Review & Tutoring System</h3>
+                                <p class="date">Jun 2022 – Oct 2022</p>
+                                <p>Desktop system for lecturer reviews and tutoring workflows; designed schema, built UI, and delivered tested functionality.</p>
+                                <ul class="project-tech">
+                                    <li>C#</li>
+                                    <li>.NET</li>
+                                    <li>WinForms</li>
+                                    <li>SQL</li>
+                                    <li>UI/UX</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Women’s Health (Android) -->
+                        <div class="project-card"
+                             data-title="Women’s Health (Android)"
+                             data-description="Android app for women’s sexual health with offline access, secure Firebase auth, and real‑time data sync. Focus on privacy and usability."
+                             data-technologies='["Java", "Android Studio", "Firebase Realtime DB", "XML"]'
+                             data-project-url="#"
+                             data-code-url="#">
+                            <div class="project-content">
+                                <h3>Women’s Health (Android)</h3>
+                                <p class="date">Sep 2022 – Oct 2022</p>
+                                <p>Mobile app providing offline health info with Firebase‑based login/registration and secure data handling.</p>
+                                <ul class="project-tech">
+                                    <li>Java (Android)</li>
+                                    <li>Firebase</li>
+                                    <li>XML</li>
+                                    <li>Android Studio</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Skills & Competencies -->
+            <section id="skills" class="section">
+                <div class="container">
+                    <h2 class="section-title">Skills & Competencies</h2>
+                    <div class="skills-grid">
+                        <div class="skill-category">
+                            <h3>RPA & QA</h3>
+                            <ul class="skill-list">
+                                <li>Blue Prism RPA — Intermediate</li>
+                                <li>Automation Testing & Deployment — Intermediate</li>
+                                <li>Test Analyst — Intermediate</li>
+                                <li>Control Room Management — Intermediate</li>
+                                <li>Stakeholder Communication — Intermediate</li>
+                            </ul>
+                        </div>
+                        <div class="skill-category">
+                            <h3>Software Development</h3>
+                            <ul class="skill-list">
+                                <li>Java (Core, Android) — Intermediate/Beginner</li>
+                                <li>C# (.NET, WinForms) — Intermediate</li>
+                                <li>C++ — Intermediate</li>
+                                <li>Python — Beginner</li>
+                                <li>Web (HTML, CSS, JS, PHP) — Beginner</li>
+                            </ul>
+                        </div>
+                        <div class="skill-category">
+                            <h3>Data & Cloud</h3>
+                            <ul class="skill-list">
+                                <li>Database: MySQL, Oracle, SQL — Intermediate</li>
+                                <li>Azure AI Fundamentals — Intermediate</li>
+                                <li>Azure & Google Cloud — Beginner</li>
+                            </ul>
+                        </div>
+                        <div class="skill-category">
+                            <h3>Engineering Foundations</h3>
+                            <ul class="skill-list">
+                                <li>System Analysis — Intermediate</li>
+                                <li>SDLC — Intermediate</li>
+                                <li>UML Design — Beginner</li>
+                                <li>Bash, Linux — Intermediate</li>
+                                <li>Networking, Server Mgmt, Cybersecurity, Pentesting — Beginner</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Certifications -->
+            <section id="certifications" class="section">
+                <div class="container">
+                    <h2 class="section-title">Certifications</h2>
+                    <div class="certifications-grid">
+                        <div class="certification-card">
+                            <div class="certification-content">
+                                <div class="certification-header">
+                                    <i class="icon">🧠</i>
+                                    <h3>Microsoft Certified: Azure AI Fundamentals</h3>
+                                </div>
+                                <span class="date">Earned on: May 28, 2025</span>
+                                <p>Validated knowledge across AI workloads, classical ML, computer vision, NLP, and Generative AI on Azure.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Experience -->
+            <section id="experience" class="section">
+                <div class="container">
+                    <h2 class="section-title">Experience</h2>
+                    <div class="experience-list">
+                        <div class="experience-item">
+                            <h3>Junior Automation Engineer — Intelliscient Technologies Pty. Ltd.</h3>
+                            <p class="date">Nov 2022 – Dec 2024</p>
+                            <ul>
+                                <li>Developed and implemented RPA solutions with Blue Prism to automate critical business processes.</li>
+                                <li>Integrated bots into existing workflows, collaborating across teams and working independently.</li>
+                                <li>Managed control room operations to ensure minimal downtime and high reliability.</li>
+                                <li>Conducted unit/integration tests, maintained bots, and built API/service integrations.</li>
+                                <li>Created documentation, daily progress reports, and ran POCs for new technologies.</li>
+                            </ul>
+                            <p><strong>Achievements:</strong> Automated 3 critical processes with high business impact, significantly improving operational efficiency.</p>
+
+                        </div>
+                        <div class="experience-item">
+                            <h3>Java Development Hands‑on Training Program — Kreative Storm</h3>
+                            <p class="date">Mar 31, 2024 – Apr 27, 2024</p>
+                            <ul>
+                                <li>Immersive program covering Core Java, OOP, debugging, performance optimization, and advanced features.</li>
+                                <li>Delivered a school management system project in a team of 5, emphasizing real‑world problem solving.</li>
+                            </ul>
+                        </div>
+                        <div class="experience-item">
+                            <h3>Blue Prism Training — Intelliscient</h3>
+                            <p class="date">Jun 2022 – Nov 2022</p>
+                            <ul>
+                                <li>Comprehensive 230+ hours classroom and 210+ hours home assignments.</li>
+                                <li>Coverage: Process/Object Studio, Exception Mgmt, Work Queues, Credentials, Lifecycle & Delivery Roadmap.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Education -->
+            <section id="education" class="section">
+                <div class="container">
+                    <h2 class="section-title">Education</h2>
+                    <div class="education-list">
+                        <div class="education-item">
+                            <h3>Bachelor’s Degree in Information Technology</h3>
+                            <p>Richfield Graduate Institute of Technology</p>
+                            <p class="date">Feb 2020 – Nov 2022 (Graduated May 2023)</p>
+                            <p><strong>Majors:</strong> Programming (C++, C#, Java Core & Mobile, PHP, HTML/CSS/JS)</p>
+                        </div>
+                        <div class="education-item">
+                            <h3>Secondary Education</h3>
+                            <p>Northview High School — Grade 12 (2019)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contact" class="section bg-dark">
+                <div class="container">
+                    <h2 class="section-title">Get In Touch</h2>
+                    <div class="contact-content">
+                        <p>Feel free to reach out to me for any questions or opportunities.</p>
+                        <div class="social-links" role="list" aria-label="Social links">
+                            <a class="social-link" href="https://www.linkedin.com/in/mbongeni-mahlangu" target="_blank" rel="noopener" aria-label="LinkedIn">
+                                <!-- LinkedIn (Simple Icons) -->
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M20.447 20.452H17.2v-5.569c0-1.328-.026-3.036-1.849-3.036-1.851 0-2.134 1.445-2.134 2.939v5.666H9.072V9h3.112v1.561h.045c.434-.823 1.494-1.692 3.073-1.692 3.29 0 3.896 2.164 3.896 4.981v6.602zM5.337 7.433c-1.004 0-1.816-.814-1.816-1.818 0-1.004.812-1.818 1.816-1.818 1.004 0 1.818.814 1.818 1.818 0 1.004-.814 1.818-1.818 1.818zM6.556 20.452H4.118V9h2.438v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.226.792 24 1.771 24h20.451C23.2 24 24 23.226 24 22.271V1.729C24 .774 23.2 0 22.222 0z"/>
+                                </svg>
+                                <span class="sr-only">LinkedIn</span>
+                            </a>
+                            <a class="social-link" href="https://github.com/MbongX" target="_blank" rel="noopener" aria-label="GitHub">
+                                <!-- GitHub (Octicon mark) -->
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.799 8.205 11.387.6.111.82-.261.82-.58 0-.287-.011-1.244-.017-2.255-3.338.726-4.042-1.416-4.042-1.416-.546-1.387-1.333-1.757-1.333-1.757-1.089-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.795.418-1.305.761-1.605-2.665-.303-5.467-1.365-5.467-6.075 0-1.342.465-2.44 1.235-3.297-.124-.303-.535-1.524.117-3.176 0 0 1.008-.324 3.301 1.258a11.5 11.5 0 0 1 6.003 0c2.292-1.582 3.298-1.258 3.298-1.258.653 1.652.242 2.873.118 3.176.77.858 1.233 1.955 1.233 3.297 0 4.721-2.806 5.768-5.479 6.066.43.372.814 1.103.814 2.222 0 1.604-.015 2.896-.015 3.293 0 .321.217.694.826.576C20.565 21.796 24 17.297 24 12 24 5.37 18.63 0 12 0z"/>
+                                </svg>
+                                <span class="sr-only">GitHub</span>
+                            </a>
+                            <a class="social-link" href="mailto:mbongenimahlangu203@gmail.com" aria-label="Email">
+                                <!-- Email (filled envelope) -->
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 2-8 5L4 6h16Zm0 12H4V8l8 5 8-5v10Z"/>
+                                </svg>
+                                <span class="sr-only">Email</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="container">
+                <p>&copy; 2025 Mbongeni Mahlangu. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Add responsive behavior for projects grid
+        function handleResize() {
+            const projectsGrid = document.querySelector('.projects-grid');
+            if (projectsGrid) {
+                projectsGrid.style.gridTemplateColumns = `repeat(auto-fill, minmax(300px, 1fr))`;
+            }
+        }
+        
+        // Initialize responsive behavior
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Initial call
+    </script>
+</body>
+</html>

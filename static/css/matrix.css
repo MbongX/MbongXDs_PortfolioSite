@@ -1,0 +1,242 @@
+/* Matrix Background */
+#matrix-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    background: #000000;
+    pointer-events: none;
+}
+
+#matrix-canvas {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.15;
+    pointer-events: none;
+    mix-blend-mode: screen;
+}
+
+/* Hero Section */
+.hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    z-index: 1;
+    padding: 2rem 0;
+    text-shadow: none !important;
+}
+
+.hero .container {
+    max-width: 1200px;
+    padding: 0 1.5rem;
+}
+
+.hero h1 {
+    font-size: 4.5rem;
+    margin-bottom: 1.5rem;
+    color: #00ff41;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    position: relative;
+    display: inline-block;
+    text-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.hero .subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 3rem;
+    color: #ffffff;
+    font-weight: 300;
+}
+
+/* Glitch Effect - White Text */
+.glitch {
+    position: relative;
+    color: #ffffff;
+    letter-spacing: 0.2em;
+    text-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: #ffffff;
+    text-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.glitch::before {
+    left: 2px;
+    clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+    left: -2px;
+    clip: rect(31px, 450px, 94px, 0);
+    animation: glitch-anim-2 2s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+    0% { clip: rect(32px, 9999px, 66px, 0); }
+    20% { clip: rect(13px, 9999px, 46px, 0); }
+    40% { clip: rect(45px, 9999px, 53px, 0); }
+    60% { clip: rect(12px, 9999px, 59px, 0); }
+    80% { clip: rect(33px, 9999px, 29px, 0); }
+    100% { clip: rect(63px, 9999px, 59px, 0); }
+}
+
+@keyframes glitch-anim-2 {
+    0% { clip: rect(54px, 9999px, 99px, 0); }
+    20% { clip: rect(35px, 9999px, 9px, 0); }
+    40% { clip: rect(25px, 9999px, 63px, 0); }
+    60% { clip: rect(52px, 9999px, 32px, 0); }
+    80% { clip: rect(63px, 9999px, 59px, 0); }
+    100% { clip: rect(12px, 9999px, 98px, 0); }
+}
+
+/* Basic Content Styling */
+#app {
+    position: relative;
+    z-index: 1;
+    color: #ffffff;
+}
+
+.section {
+    padding: 4rem 0;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Ensure content is above matrix */
+.container, .content, .card, .project-card {
+    position: relative;
+    z-index: 2;
+}
+
+/* Links styling */
+a {
+    color: #00ff41 !important;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: #00cc33 !important;
+    text-shadow: none !important;
+}
+
+/* Buttons */
+button, .btn {
+    background-color: rgba(0, 20, 10, 0.8) !important;
+    border: 1px solid #00ff41;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.project-card:hover, .card:hover, button:hover, .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 255, 65, 0.3);
+}
+
+/* Form elements */
+input, textarea, select {
+    background-color: rgba(0, 10, 5, 0.8) !important;
+    border: 1px solid #00aa44 !important;
+    color: #ffffff !important;
+    z-index: 2;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #00ff41 !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 255, 65, 0.25) !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00aa44;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #00ff41;
+}
+
+/* Ensure content is visible */
+.section {
+    position: relative;
+    z-index: 2;
+}
+
+/* Text contrast */
+h1, h2, h3, h4, h5, h6, p, a, li, span {
+    text-shadow: none !important;
+}
+
+/* Project cards */
+.project-card {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+/* Contact section */
+.bg-dark {
+    background-color: rgba(0, 0, 0, 0.85) !important;
+}
+
+/* Base styles */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+/* Text visibility */
+h1, h2, h3, h4, h5, h6 {
+    color: #fff;
+    text-shadow: none !important;
+}
+
+p, li, a {
+    color: #eee;
+    text-shadow: none !important;
+}
+
+a {
+    color: #4CAF50;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #8BC34A;
+}

@@ -1,0 +1,183 @@
+/* Matrix background container - Fixed position behind everything */
+#matrix-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Keep behind content but above page background */
+    overflow: hidden;
+    background: #000000; /* Solid black background */
+    pointer-events: none;
+    opacity: 0.8; /* Darker background for better contrast */
+}
+
+/* Matrix canvas - Semi-transparent green text */
+#matrix-canvas {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.2; /* More subtle effect */
+    pointer-events: none;
+    mix-blend-mode: screen; /* Better blending with background */
+    will-change: transform; /* Optimize for animations */
+}
+
+/* Main content container */
+#app {
+    position: relative;
+    z-index: 1; /* Normal document flow */
+    min-height: 100vh;
+    background-color: transparent;
+    overflow-x: hidden;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto;
+    isolation: isolate; /* Creates a new stacking context */
+}
+
+/* Ensure all content is visible and properly layered */
+#app > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* Section styling with semi-transparent dark background */
+.section {
+    position: relative;
+    z-index: 1001; /* Above the app container */
+    background-color: rgba(0, 0, 0, 0.7); /* Darker background for better readability */
+    margin: 2rem 0;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 255, 65, 0.2);
+    backdrop-filter: blur(4px);
+    color: #fff;
+}
+
+/* Text contrast and readability */
+body {
+    color: #ffffff;
+    background-color: #000000; /* Fallback solid black */
+}
+
+h1, h2, h3, h4, h5, h6, p, li, span, div {
+    color: #ffffff !important;
+    text-shadow: none !important;
+}
+
+/* Links styling */
+a {
+    color: #00ff41 !important;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+a:hover {
+    color: #ffffff !important;
+    text-shadow: none !important;
+}
+
+/* Project cards and other interactive elements */
+.project-card, .card, button, .btn {
+    background-color: rgba(0, 20, 10, 0.8) !important;
+    border: 1px solid #00ff41;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.project-card:hover, .card:hover, button:hover, .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 255, 65, 0.3);
+}
+
+/* Form elements */
+input, textarea, select {
+    background-color: rgba(0, 10, 5, 0.8) !important;
+    border: 1px solid #00aa44 !important;
+    color: #ffffff !important;
+    z-index: 2;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #00ff41 !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 255, 65, 0.25) !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00aa44;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #00ff41;
+}
+
+/* Ensure content is visible */
+.section {
+    position: relative;
+    z-index: 2;
+}
+
+/* Text contrast */
+h1, h2, h3, h4, h5, h6, p, a, li, span {
+    text-shadow: none !important;
+}
+
+/* Project cards */
+.project-card {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+/* Contact section */
+.bg-dark {
+    background-color: rgba(0, 0, 0, 0.85) !important;
+}
+
+/* Base styles */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+/* Text visibility */
+h1, h2, h3, h4, h5, h6 {
+    color: #fff;
+    text-shadow: none !important;
+}
+
+p, li, a {
+    color: #eee;
+    text-shadow: none !important;
+}
+
+a {
+    color: #4CAF50;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #8BC34A;
+}
