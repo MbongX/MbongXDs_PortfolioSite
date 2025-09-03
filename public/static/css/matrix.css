@@ -1,73 +1,134 @@
-/* Matrix background container - Fixed position behind everything */
+/* Matrix Background */
 #matrix-bg {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1; /* Keep behind content but above page background */
+    z-index: -1;
     overflow: hidden;
-    background: #000000; /* Solid black background */
+    background: #000000;
     pointer-events: none;
-    opacity: 0.8; /* Darker background for better contrast */
 }
 
-/* Matrix canvas - Semi-transparent green text */
 #matrix-canvas {
     display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.15;
+    pointer-events: none;
+    mix-blend-mode: screen;
+}
+
+/* Hero Section */
+.hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    z-index: 1;
+    padding: 2rem 0;
+    text-shadow: none !important;
+}
+
+.hero .container {
+    max-width: 1200px;
+    padding: 0 1.5rem;
+}
+
+.hero h1 {
+    font-size: 4.5rem;
+    margin-bottom: 1.5rem;
+    color: #00ff41;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    position: relative;
+    display: inline-block;
+    text-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.hero .subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 3rem;
+    color: #ffffff;
+    font-weight: 300;
+}
+
+/* Glitch Effect - White Text */
+.glitch {
+    position: relative;
+    color: #ffffff;
+    letter-spacing: 0.2em;
+    text-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 0.2; /* More subtle effect */
-    pointer-events: none;
-    mix-blend-mode: screen; /* Better blending with background */
-    will-change: transform; /* Optimize for animations */
+    color: #ffffff;
+    text-shadow: none !important;
+    box-shadow: none !important;
 }
 
-/* Main content container */
+.glitch::before {
+    left: 2px;
+    clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+    left: -2px;
+    clip: rect(31px, 450px, 94px, 0);
+    animation: glitch-anim-2 2s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+    0% { clip: rect(32px, 9999px, 66px, 0); }
+    20% { clip: rect(13px, 9999px, 46px, 0); }
+    40% { clip: rect(45px, 9999px, 53px, 0); }
+    60% { clip: rect(12px, 9999px, 59px, 0); }
+    80% { clip: rect(33px, 9999px, 29px, 0); }
+    100% { clip: rect(63px, 9999px, 59px, 0); }
+}
+
+@keyframes glitch-anim-2 {
+    0% { clip: rect(54px, 9999px, 99px, 0); }
+    20% { clip: rect(35px, 9999px, 9px, 0); }
+    40% { clip: rect(25px, 9999px, 63px, 0); }
+    60% { clip: rect(52px, 9999px, 32px, 0); }
+    80% { clip: rect(63px, 9999px, 59px, 0); }
+    100% { clip: rect(12px, 9999px, 98px, 0); }
+}
+
+/* Basic Content Styling */
 #app {
     position: relative;
-    z-index: 1; /* Normal document flow */
-    min-height: 100vh;
-    background-color: transparent;
-    overflow-x: hidden;
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto;
-    isolation: isolate; /* Creates a new stacking context */
+    z-index: 1;
+    color: #ffffff;
 }
 
-/* Ensure all content is visible and properly layered */
-#app > * {
+.section {
+    padding: 4rem 0;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Ensure content is above matrix */
+.container, .content, .card, .project-card {
     position: relative;
     z-index: 2;
-}
-
-/* Section styling with semi-transparent dark background */
-.section {
-    position: relative;
-    z-index: 1001; /* Above the app container */
-    background-color: rgba(0, 0, 0, 0.7); /* Darker background for better readability */
-    margin: 2rem 0;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 255, 65, 0.2);
-    backdrop-filter: blur(4px);
-    color: #fff;
-}
-
-/* Text contrast and readability */
-body {
-    color: #ffffff;
-    background-color: #000000; /* Fallback solid black */
-}
-
-h1, h2, h3, h4, h5, h6, p, li, span, div {
-    color: #ffffff !important;
-    text-shadow: none !important;
 }
 
 /* Links styling */
@@ -75,17 +136,15 @@ a {
     color: #00ff41 !important;
     text-decoration: none;
     transition: all 0.3s ease;
-    position: relative;
-    z-index: 2;
 }
 
 a:hover {
-    color: #ffffff !important;
+    color: #00cc33 !important;
     text-shadow: none !important;
 }
 
-/* Project cards and other interactive elements */
-.project-card, .card, button, .btn {
+/* Buttons */
+button, .btn {
     background-color: rgba(0, 20, 10, 0.8) !important;
     border: 1px solid #00ff41;
     transition: all 0.3s ease;

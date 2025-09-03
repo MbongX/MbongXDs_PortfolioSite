@@ -4,9 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio | Mbongeni Mahlangu</title>
-    <link rel="stylesheet" href="/static/css/style.min.css?v=20250823T180623">
-    <link rel="stylesheet" href="/static/css/matrix.css?v=20250823T180623">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+    <meta name="theme-color" content="#0d0208">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="static/css/style.min.css?v=20250902224249">
+    <link rel="stylesheet" href="static/css/matrix.css?v=20250902224249">
     <style>
+        /* Hero Logo Styles */
+        .hero-logo {
+            border: 3px solid #00ff41 !important;
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.3) !important;
+            background: rgba(13, 2, 8, 0.9) !important;
+        }
+        
         /* Global hard kill for any text glow/shadow/filters */
         *, *::before, *::after {
             text-shadow: none !important;
@@ -23,6 +36,18 @@
             text-shadow: none !important;
             -webkit-text-stroke-width: 0 !important;
             -webkit-text-stroke-color: currentColor !important;
+        }
+        /* Visually hide screen-reader-only labels so SVG icons show without duplicate text */
+        .sr-only {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
         }
     </style>
     <!-- Load scripts without defer to ensure proper initialization order -->
@@ -244,6 +269,12 @@
             <!-- Hero Section -->
             <section class="hero">
                 <div class="container">
+                    <div class="hero-logo">
+                        <img src="./static/img/hero-180.jpg"
+                             alt="Mbongeni Mahlangu's Profile Picture"
+                             width="180" height="180"
+                             loading="eager" decoding="async">
+                    </div>
                     <h1 class="glitch" data-text="Mbongeni Mahlangu">Mbongeni Mahlangu</h1>
                     <h2 class="subtitle">Software Developer/Engineer | Automation Engineer (RPA)</h2>
                     <div class="cta-buttons">
@@ -544,6 +575,13 @@
                                 </svg>
                                 <span class="sr-only">Email</span>
                             </a>
+                            <a class="social-link" href="tel:+27639016310" aria-label="Phone">
+                                <!-- Phone (handset) -->
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                    <path d="M6.62 10.79a15.053 15.053 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 0 1 1 1V21a1 1 0 0 1-1 1C10.85 22 2 13.15 2 2a1 1 0 0 1 1-1H6.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.58a1 1 0 0 1-.24 1.01l-2.2 2.2Z"/>
+                                </svg>
+                                <span class="sr-only">Phone</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -569,6 +607,44 @@
         // Initialize responsive behavior
         window.addEventListener('resize', handleResize);
         handleResize(); // Initial call
+    </script>
+
+    <script>
+        // Debug image loading
+        document.addEventListener('DOMContentLoaded', function() {
+            const logo = document.querySelector('.hero-logo img');
+            if (logo) {
+                console.log('Logo element found:', logo);
+                console.log('Current src:', logo.src);
+                
+                // Test if image loads
+                logo.onload = function() {
+                    console.log('Image loaded successfully');
+                    console.log('Natural dimensions:', logo.naturalWidth + 'x' + logo.naturalHeight);
+                };
+                
+                logo.onerror = function() {
+                    console.error('Failed to load image:', logo.src);
+                    // Try fallback
+                    if (!logo.src.includes('placeholder')) {
+                        console.log('Trying fallback image...');
+                        logo.src = 'https://via.placeholder.com/180?text=Logo+Not+Found';
+                    }
+                };
+                
+                // Force check
+                if (logo.complete) {
+                    if (logo.naturalWidth === 0) {
+                        console.error('Image loaded but has 0 width');
+                        logo.dispatchEvent(new Event('error'));
+                    } else {
+                        logo.dispatchEvent(new Event('load'));
+                    }
+                }
+            } else {
+                console.error('Logo element not found');
+            }
+        });
     </script>
 </body>
 </html>

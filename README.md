@@ -1,31 +1,35 @@
-# Mbongeni Mahlangu - Portfolio Website
+# Mbongeni Mahlangu - Portfolio
 
-A modern, responsive portfolio website showcasing Mbongeni Mahlangu's skills, experience, and projects. The website features a sleek design with a subtle Matrix-inspired animation in the background.
+[![Azure Static Web Apps CI/CD](https://github.com/MbongX/MbongXDs_PortfolioSite/actions/workflows/azure-static-web-apps-victorious-mushroom-0257e8703.yml/badge.svg)](https://github.com/MbongX/MbongXDs_PortfolioSite/actions)
+
+A modern, responsive portfolio website showcasing Mbongeni Mahlangu's professional skills, experience, and projects. The website features a sleek design with optimized performance and security best practices.
 
 ## ✨ Features
 
-- 🚀 Responsive design that works on all devices
-- 🎨 Modern UI with smooth animations and transitions
-- 🔮 Interactive Matrix-style background animation
-- 📱 Mobile-first approach with optimized performance
-- 📂 Project showcase with detailed modals
-- 📧 Contact form functionality
-- 🌐 Deployable to Azure Static Web Apps
+- 🚀 Blazing fast performance with optimized assets
+- 🔒 Security-focused with strict Content Security Policy
+- 📱 Fully responsive design for all devices
+- ⚡ Optimized for Core Web Vitals
+- 🌐 Deployed on Azure Static Web Apps
+- 🔄 Efficient caching strategy for optimal loading
 
 ## 🛠️ Tech Stack
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Build Tools**: npm, clean-css, Terser
-- **Deployment**: Azure Static Web Apps
+- **Server**: Node.js with Express
+- **Security**: Helmet.js, CSP, HSTS
+- **Performance**: Compression, asset optimization
+- **Deployment**: Azure Static Web Apps with GitHub Actions
 - **Version Control**: Git & GitHub
 
-## 📋 Prerequisites
+## 🚀 Quick Start
 
-- Node.js 18.x or higher
-- npm 8.x or higher
-- (Optional) Azure CLI for deployment
+### Prerequisites
 
-## 🚀 Getting Started
+- Node.js 20.x or higher
+- npm 9.x or higher
+
+### Local Development
 
 1. Clone the repository:
    ```bash
@@ -38,15 +42,55 @@ A modern, responsive portfolio website showcasing Mbongeni Mahlangu's skills, ex
    npm install
    ```
 
-3. Start the development server:
+3. Build the project:
    ```bash
-   npm run dev
+   npm run build
    ```
 
-4. Open your browser and navigate to:
+4. Start the production server:
+   ```bash
+   npm start
+   ```
+
+5. Open your browser and navigate to:
    ```
    http://localhost:3000
    ```
+
+## 🚀 Deployment
+
+This project is configured for automatic deployment to Azure Static Web Apps via GitHub Actions. Any push to the `master` branch will trigger a new deployment.
+
+### Manual Deployment
+
+1. Install the Azure CLI:
+   ```bash
+   curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+   ```
+
+2. Login to Azure:
+   ```bash
+   az login
+   ```
+
+3. Deploy to Azure Static Web Apps:
+   ```bash
+   az staticwebapp deploy \
+       --name your-app-name \
+       --source . \
+       --location centralus \
+       --token $AZURE_STATIC_WEB_APPS_TOKEN
+   ```
+
+## 🔒 Security Headers
+
+This application includes the following security headers:
+- Content Security Policy (CSP)
+- HTTP Strict Transport Security (HSTS)
+- X-Content-Type-Options
+- X-Frame-Options
+- X-XSS-Protection
+- Referrer-Policy
 
 ## 🏗️ Building for Production
 

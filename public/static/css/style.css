@@ -43,7 +43,6 @@
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.2);
     --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.3);
-    --shadow-glow: 0 0 15px rgba(0, 255, 65, 0.3);
 }
 
 /* Reset & Base Styles */
@@ -124,6 +123,7 @@ img {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 var(--spacing-md);
+    text-align: center;
 }
 
 .section {
@@ -136,12 +136,12 @@ img {
     text-align: center;
     margin-bottom: var(--spacing-lg);
     position: relative;
-    display: inline-block;
+    display: block;
 }
 
 .section-title::after {
     content: '';
-    position: absolute;
+    position:relative;
     bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
@@ -177,7 +177,6 @@ img {
     color: var(--color-primary);
     border-color: var(--color-primary);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-glow);
 }
 
 .btn-outline {
@@ -190,21 +189,12 @@ img {
     background-color: var(--color-primary);
     color: var(--color-dark);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-glow);
 }
 
 /* Animations */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-/* Final safeguard: absolutely no text glow anywhere */
-p, a, li, span, h1, h2, h3, h4, h5, h6 {
-    text-shadow: none !important;
-    filter: none !important;
-    box-shadow: none !important;
-    -webkit-text-stroke: 0 !important;
 }
 
 @keyframes slideInLeft {
@@ -225,6 +215,19 @@ p, a, li, span, h1, h2, h3, h4, h5, h6 {
 .text-muted { color: var(--color-text-muted); }
 .text-light { color: var(--color-light); }
 .text-dark { color: var(--color-dark); }
+
+/* Visually hidden but accessible (for screen-reader-only text) */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
 
 /* Spacing Utilities */
 /* Margin Top */
@@ -570,6 +573,45 @@ a:hover {
     line-height: 1.2;
 }
 
+/* Hero Logo (circular avatar) */
+.hero-logo {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 2.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #00ff41; /* Matrix green */
+    box-shadow: 0 0 25px rgba(0, 255, 65, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    background: rgba(13, 2, 8, 0.9); /* Dark background to match theme */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-logo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 35px rgba(0, 255, 65, 0.4);
+}
+
+.hero-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 50%;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Ensure hero block content is centered regardless of generic .container rules */
+.hero .container { text-align: center; }
+
+@media (max-width: 576px) {
+    .hero-logo { width: 110px; height: 110px; }
+}
+
 .hero-subtitle {
     font-size: 1.5rem;
     color: var(--color-primary);
@@ -706,7 +748,7 @@ a:hover {
 
 .project-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     border-color: var(--color-primary);
 }
 
@@ -749,15 +791,15 @@ a:hover {
     gap: 0.5rem;
     margin-top: auto;
     padding-top: 1rem;
-    
-    li {
-        background: rgba(0, 255, 65, 0.1);
-        color: #00ff41;
-        padding: 0.3rem 0.8rem;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        font-family: var(--font-mono);
-    }
+}
+
+.project-tech li {
+    background: rgba(0, 255, 65, 0.1);
+    color: #00ff41;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
 }
 
 /* ==========================================================================
@@ -807,7 +849,7 @@ a:hover {
     transform: translateY(20px);
     transition: transform 0.3s ease;
     z-index: 2;
-    box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
 }
 
 .project-modal.active .modal-content {
@@ -1062,6 +1104,81 @@ textarea.form-control {
     }
 }
 
+/* Glitch Effect */
+.glitch {
+    position: relative;
+    color: #fff;
+    letter-spacing: 0.5em;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.glitch::before {
+    left: 2px;
+    clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+    left: -2px;
+    clip: rect(31px, 450px, 94px, 0);
+    animation: glitch-anim-2 2s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+    0% { clip: rect(32px, 9999px, 66px, 0); }
+    20% { clip: rect(13px, 9999px, 46px, 0); }
+    40% { clip: rect(45px, 9999px, 53px, 0); }
+    60% { clip: rect(38px, 9999px, 52px, 0); }
+    80% { clip: rect(42px, 9999px, 23px, 0); }
+    100% { clip: rect(63px, 9999px, 59px, 0); }
+}
+
+@keyframes glitch-anim-2 {
+    0% { clip: rect(54px, 9999px, 99px, 0); }
+    20% { clip: rect(35px, 9999px, 9px, 0); }
+    40% { clip: rect(25px, 9999px, 63px, 0); }
+    60% { clip: rect(58px, 9999px, 72px, 0); }
+    80% { clip: rect(1px, 9999px, 60px, 0); }
+    100% { clip: rect(73px, 9999px, 20px, 0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .about-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .about-image {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .project-links {
+        flex-direction: column;
+    }
+    
+    .btn + .btn {
+        margin-left: 0;
+    }
+}
+
 /* Animation for modal */
 @keyframes fadeInUp {
     from {
@@ -1083,77 +1200,31 @@ textarea.form-control {
    ========================================================================== */
 
 @media print {
-  body { font-size: 12pt; background: #fff !important; color: #000 !important; }
-  .container { background: #fff !important; box-shadow: none !important; border: none !important; }
-  .btn, .matrix-bg, .nav { display: none !important; }
-  a { text-decoration: none !important; color: #000 !important; }
-  .some-element { padding: 8px 20px; font-size: 0.9rem; }
-}
-
-/* =============================
-   Hero Glitch (glow-free)
-   ============================= */
-.glitch {
-  position: relative;
-  display: inline-block;
-  color: #ffffff;
-  letter-spacing: 0.02em;
-  text-shadow: none !important; /* keep global rule explicit */
-}
-
-.glitch::before,
-.glitch::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  pointer-events: none;
-  text-shadow: none !important;
-}
-
-/* Color channels without using text-shadow to avoid glow */
-.glitch::before {
-  color: #ff00c1; /* magenta channel */
-  transform: translateX(2px);
-  animation: glitch-anim-1 2s infinite linear alternate-reverse;
-}
-
-.glitch::after {
-  color: #00fff9; /* cyan channel */
-  transform: translateX(-2px);
-  animation: glitch-anim-2 2s infinite linear alternate-reverse;
-}
-
-/* Keyframes rely on clipping bands to simulate scanline glitch */
-@keyframes glitch-anim-1 {
-  0%   { clip-path: inset(0 0 80% 0); }
-  10%  { clip-path: inset(10% 0 70% 0); }
-  20%  { clip-path: inset(20% 0 60% 0); }
-  30%  { clip-path: inset(30% 0 50% 0); }
-  40%  { clip-path: inset(40% 0 40% 0); }
-  50%  { clip-path: inset(50% 0 30% 0); }
-  60%  { clip-path: inset(40% 0 40% 0); }
-  70%  { clip-path: inset(30% 0 50% 0); }
-  80%  { clip-path: inset(20% 0 60% 0); }
-  90%  { clip-path: inset(10% 0 70% 0); }
-  100% { clip-path: inset(0 0 80% 0); }
-}
-
-@keyframes glitch-anim-2 {
-  0%   { clip-path: inset(80% 0 0 0); }
-  10%  { clip-path: inset(70% 0 10% 0); }
-  20%  { clip-path: inset(60% 0 20% 0); }
-  30%  { clip-path: inset(50% 0 30% 0); }
-  40%  { clip-path: inset(40% 0 40% 0); }
-  50%  { clip-path: inset(30% 0 50% 0); }
-  60%  { clip-path: inset(40% 0 40% 0); }
-  70%  { clip-path: inset(50% 0 30% 0); }
-  80%  { clip-path: inset(60% 0 20% 0); }
-  90%  { clip-path: inset(70% 0 10% 0); }
-  100% { clip-path: inset(80% 0 0 0); }
+    body { 
+        font-size: 12pt;
+        background: white !important;
+        color: black !important;
+    }
+    
+    .container {
+        background: white !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    
+    .btn, .nav, .matrix-bg {
+        display: none !important;
+    }
+    
+    a { 
+        text-decoration: none !important;
+        color: black !important;
+    }
+    
+    .some-element {
+        padding: 8px 20px;
+        font-size: 0.9rem;
+    }
 }
 
 /* Hero Section */
@@ -1164,22 +1235,12 @@ textarea.form-control {
     text-align: center;
     padding: 100px 0;
     position: relative;
+    overflow: hidden;
 }
 
 .hero h1 {
     font-size: 4rem;
     margin-bottom: 1rem;
-    text-shadow: none;
-    animation: none;
-}
-
-@keyframes glow {
-    from {
-        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--primary), 0 0 20px var(--primary);
-    }
-    to {
-        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--primary), 0 0 40px var(--primary);
-    }
 }
 
 .hero .subtitle {
@@ -1356,18 +1417,6 @@ textarea.form-control {
     border: 1px solid rgba(0, 255, 65, 0.1);
     position: relative;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    backdrop-filter: blur(5px);
-    transform: translateY(0);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    
-    &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 255, 65, 0.15);
-        border-color: rgba(0, 255, 65, 0.3);
-    }
-    overflow: hidden;
 }
 
 .project-card::before {
@@ -1381,9 +1430,7 @@ textarea.form-control {
     transition: 0.5s;
 }
 
-.project-card:hover::before {
-    left: 100%;
-}
+.project-card:hover::before { left: 100%; }
 
 .project-card:hover {
     transform: translateY(-10px);
@@ -1528,53 +1575,43 @@ textarea.form-control {
 .social-links {
     display: flex;
     justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 3rem;
 }
 
 .social-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.25);
-    color: #fafafa; /* icon color */
-    transition: transform 160ms ease, border-color 160ms ease, color 160ms ease, background-color 160ms ease;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0, 255, 65, 0.08);
+    color: var(--color-primary) !important;
+    border: 1px solid rgba(0, 255, 65, 0.35);
+    font-size: 1.5rem;
+    transition: var(--transition-base);
+    margin: 0 var(--spacing-xs);
 }
 
+/* Ensure inline SVGs inherit color and render at intended size */
 .social-link svg {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     fill: currentColor;
     display: block;
 }
 
-.bg-dark .social-link {
-    border-color: rgba(255,255,255,0.3);
-    color: #ffffff;
-}
+/* Ensure inner paths inherit color reliably */
+.social-link svg path { fill: currentColor !important; stroke: none; }
 
-.social-link:hover,
-.social-link:focus-visible {
-    transform: translateY(-3px);
-    border-color: #00ff41; /* matrix green */
-    color: #00ff41;
-    background: rgba(0,255,65,0.08);
-    outline: none;
-}
+/* Guard against extensions or resets hiding icons */
+.social-links, .social-link, .social-link svg { opacity: 1 !important; visibility: visible !important; }
 
-/* Screen-reader only text */
-.sr-only {
-    position: absolute !important;
-    width: 1px; height: 1px;
-    padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0, 0, 0, 0);
-    white-space: nowrap; border: 0;
+.social-link:hover {
+    background: var(--color-primary);
+    color: var(--color-dark);
+    transform: translateY(-5px);
 }
 
 /* Footer */
@@ -1672,51 +1709,103 @@ footer {
     }
 }
 
-/* Glitch Effect */
-.glitch {
-    position: relative;
-    color: #fff;
-    letter-spacing: 0.5em;
+/* ==========================================================================
+   #RESPONSIVE ENHANCEMENTS
+   ========================================================================== */
+/* Large tablets / small desktops */
+@media (max-width: 1200px) {
+    .container {
+        max-width: 1000px;
+        padding-left: calc(var(--spacing-md));
+        padding-right: calc(var(--spacing-md));
+    }
 }
 
-.glitch::before,
-.glitch::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+/* Tablets */
+@media (max-width: 992px) {
+    .container {
+        width: 100%;
+        padding-left: var(--spacing-md);
+        padding-right: var(--spacing-md);
+    }
+
+    .section {
+        padding: var(--spacing-lg) 0;
+    }
+
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .about-content,
+    .experience-list {
+        gap: var(--spacing-md);
+    }
 }
 
-.glitch::before {
-    left: 2px;
-    text-shadow: -2px 0 #ff00c1;
-    clip: rect(44px, 450px, 56px, 0);
-    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+/* Phones (landscape and portrait) */
+@media (max-width: 768px) {
+    html { font-size: 15px; }
+
+    h1 { font-size: 2.25rem; }
+    h2.section-title { font-size: 1.8rem; }
+
+    .hero .container { text-align: center; }
+    .cta-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        align-items: stretch;
+        max-width: 420px;
+        margin: 0 auto;
+    }
+
+    .btn { width: 100%; }
+
+    .projects-grid { grid-template-columns: 1fr; }
+
+    .about-content, .experience-list, .contact-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+
+    .timeline-item { width: 100%; left: 0 !important; }
+
+    .container {
+        margin: var(--spacing-md) auto;
+        padding: var(--spacing-md);
+    }
+
+    .social-links { gap: 1rem; }
 }
 
-.glitch::after {
-    left: -2px;
-    text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
-    clip: rect(31px, 450px, 94px, 0);
-    animation: glitch-anim-2 2s infinite linear alternate-reverse;
+/* Small phones */
+@media (max-width: 576px) {
+    html { font-size: 14px; }
+    h1 { font-size: 1.9rem; }
+    h2.section-title { font-size: 1.6rem; }
+
+    .container { padding: var(--spacing-sm); }
+
+    .projects-grid { gap: var(--spacing-md); }
+
+    footer .container p { font-size: 0.9rem; text-align: center; }
 }
 
-@keyframes glitch-anim-1 {
-    0% { clip: rect(32px, 9999px, 66px, 0); }
-    20% { clip: rect(13px, 9999px, 46px, 0); }
-    40% { clip: rect(45px, 9999px, 53px, 0); }
-    60% { clip: rect(38px, 9999px, 52px, 0); }
-    80% { clip: rect(42px, 9999px, 23px, 0); }
-    100% { clip: rect(63px, 9999px, 59px, 0); }
-}
+/* ==========================================================================
+   #UTILITY OVERRIDES
+   ========================================================================== */
 
-@keyframes glitch-anim-2 {
-    0% { clip: rect(54px, 9999px, 99px, 0); }
-    20% { clip: rect(35px, 9999px, 9px, 0); }
-    40% { clip: rect(25px, 9999px, 63px, 0); }
-    60% { clip: rect(58px, 9999px, 72px, 0); }
-    80% { clip: rect(1px, 9999px, 60px, 0); }
-    100% { clip: rect(73px, 9999px, 20px, 0); }
-}
+ /* Force remove all text glow and shadows from glitch effect */
+ .glitch, .glitch::before, .glitch::after {
+     text-shadow: none !important;
+ }
+
+ /* Final global safeguard: remove any paragraph text glow site-wide */
+ p, li, a, span, h1, h2, h3, h4, h5, h6 {
+     text-shadow: none !important;
+     box-shadow: none !important;
+     filter: none !important;
+     -webkit-text-stroke: 0 !important;
+ }
