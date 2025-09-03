@@ -10,22 +10,27 @@ A modern, responsive portfolio website showcasing Mbongeni Mahlangu's skills, ex
 - 📱 Mobile-first approach with optimized performance
 - 📂 Project showcase with detailed modals
 - 📧 Contact form functionality
-- 🌐 Deployable to Azure Static Web Apps
+- 🌐 Deployed on Azure Static Web Apps
+- 🔒 Security headers and best practices
+- ⚡ Performance optimized with caching strategies
 
 ## 🛠️ Tech Stack
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Build Tools**: npm, clean-css, Terser
-- **Deployment**: Azure Static Web Apps
+- **Backend**: Node.js with Express
+- **Build Tools**: npm, cpx
+- **Security**: Helmet.js, CSP headers
+- **Performance**: Compression, caching
+- **Deployment**: Azure Static Web Apps, GitHub Actions
 - **Version Control**: Git & GitHub
 
 ## 📋 Prerequisites
 
-- Node.js 18.x or higher
-- npm 8.x or higher
-- (Optional) Azure CLI for deployment
+- Node.js 20.x or higher
+- npm 9.x or higher
+- Azure account (for deployment)
 
-## 🚀 Getting Started
+## 🚀 Local Development
 
 1. Clone the repository:
    ```bash
@@ -35,18 +40,75 @@ A modern, responsive portfolio website showcasing Mbongeni Mahlangu's skills, ex
 
 2. Install dependencies:
    ```bash
-   npm install
+   npm ci
    ```
 
 3. Start the development server:
    ```bash
-   npm run dev
+   npm start
    ```
 
 4. Open your browser and navigate to:
    ```
    http://localhost:3000
    ```
+
+## 🚀 Production Build
+
+To create a production build:
+
+```bash
+npm run build
+```
+
+This will:
+1. Clean the `public/static` directory
+2. Copy all static assets to the public directory
+3. Optimize assets for production
+
+## 🌐 Deployment
+
+The application is configured for deployment to Azure Static Web Apps with GitHub Actions. The deployment workflow is automatically triggered on pushes to the `master` branch.
+
+### Manual Deployment
+
+1. Push your changes to the `master` branch
+2. GitHub Actions will automatically build and deploy the application
+
+### Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```
+NODE_ENV=production
+PORT=3000
+```
+
+## 🏗️ Project Structure
+
+```
+├── .github/workflows/    # GitHub Actions workflows
+├── api/                  # API endpoints (if any)
+├── public/               # Public assets
+│   ├── static/           # Static files (CSS, JS, images)
+│   ├── index.html        # Main HTML file
+│   └── staticwebapp.config.json  # Azure Static Web Apps config
+├── static/               # Source static files
+├── .gitignore           # Git ignore file
+├── package.json         # Project configuration
+└── server.js            # Express server
+```
+
+## 🔒 Security
+
+The application includes several security measures:
+
+- Content Security Policy (CSP) headers
+- HTTP Strict Transport Security (HSTS)
+- XSS Protection
+- Clickjacking protection
+- MIME-type sniffing prevention
+- Secure headers with Helmet.js
 
 ## 🏗️ Building for Production
 
