@@ -29,8 +29,10 @@
   "keywords": [
     "portfolio",
     "static-site",
-    "azure"
+    "azure",
+    "personal-website"
   ],
   "author": "Mbongeni Mahlangu",
-  "license": "MIT"
+  "license": "MIT",
+  "private": true
 }

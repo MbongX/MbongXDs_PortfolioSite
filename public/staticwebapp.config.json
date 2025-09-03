@@ -47,14 +47,18 @@
       }
     },
     {
-      "route": "/index.html",
+      "route": "/*",
       "headers": {
-        "Cache-Control": "no-cache, no-store, must-revalidate"
-      }
+        "Content-Type": "text/html; charset=utf-8"
+      },
+      "rewrite": "/index.html"
     },
     {
-      "route": "/*",
-      "rewrite": "/index.html"
+      "route": "/index.html",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Content-Type": "text/html; charset=utf-8"
+      }
     }
   ]
 }

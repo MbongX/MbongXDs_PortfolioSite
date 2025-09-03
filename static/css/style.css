@@ -123,6 +123,7 @@ img {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 var(--spacing-md);
+    text-align: center;
 }
 
 .section {
@@ -135,12 +136,12 @@ img {
     text-align: center;
     margin-bottom: var(--spacing-lg);
     position: relative;
-    display: inline-block;
+    display: block;
 }
 
 .section-title::after {
     content: '';
-    position: absolute;
+    position:relative;
     bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
@@ -214,6 +215,19 @@ img {
 .text-muted { color: var(--color-text-muted); }
 .text-light { color: var(--color-light); }
 .text-dark { color: var(--color-dark); }
+
+/* Visually hidden but accessible (for screen-reader-only text) */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
 
 /* Spacing Utilities */
 /* Margin Top */
@@ -559,6 +573,45 @@ a:hover {
     line-height: 1.2;
 }
 
+/* Hero Logo (circular avatar) */
+.hero-logo {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 2.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #00ff41; /* Matrix green */
+    box-shadow: 0 0 25px rgba(0, 255, 65, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    background: rgba(13, 2, 8, 0.9); /* Dark background to match theme */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-logo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 35px rgba(0, 255, 65, 0.4);
+}
+
+.hero-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 50%;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Ensure hero block content is centered regardless of generic .container rules */
+.hero .container { text-align: center; }
+
+@media (max-width: 576px) {
+    .hero-logo { width: 110px; height: 110px; }
+}
+
 .hero-subtitle {
     font-size: 1.5rem;
     color: var(--color-primary);
@@ -738,15 +791,15 @@ a:hover {
     gap: 0.5rem;
     margin-top: auto;
     padding-top: 1rem;
-    
-    li {
-        background: rgba(0, 255, 65, 0.1);
-        color: #00ff41;
-        padding: 0.3rem 0.8rem;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        font-family: var(--font-mono);
-    }
+}
+
+.project-tech li {
+    background: rgba(0, 255, 65, 0.1);
+    color: #00ff41;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
 }
 
 /* ==========================================================================
@@ -1364,18 +1417,6 @@ textarea.form-control {
     border: 1px solid rgba(0, 255, 65, 0.1);
     position: relative;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    backdrop-filter: blur(5px);
-    transform: translateY(0);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    
-    &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 255, 65, 0.15);
-        border-color: rgba(0, 255, 65, 0.3);
-    }
-    overflow: hidden;
 }
 
 .project-card::before {
@@ -1389,9 +1430,7 @@ textarea.form-control {
     transition: 0.5s;
 }
 
-.project-card:hover::before {
-    left: 100%;
-}
+.project-card:hover::before { left: 100%; }
 
 .project-card:hover {
     transform: translateY(-10px);
@@ -1547,12 +1586,27 @@ textarea.form-control {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: rgba(0, 255, 65, 0.1);
-    color: var(--color-primary);
+    background: rgba(0, 255, 65, 0.08);
+    color: var(--color-primary) !important;
+    border: 1px solid rgba(0, 255, 65, 0.35);
     font-size: 1.5rem;
     transition: var(--transition-base);
     margin: 0 var(--spacing-xs);
 }
+
+/* Ensure inline SVGs inherit color and render at intended size */
+.social-link svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+    display: block;
+}
+
+/* Ensure inner paths inherit color reliably */
+.social-link svg path { fill: currentColor !important; stroke: none; }
+
+/* Guard against extensions or resets hiding icons */
+.social-links, .social-link, .social-link svg { opacity: 1 !important; visibility: visible !important; }
 
 .social-link:hover {
     background: var(--color-primary);

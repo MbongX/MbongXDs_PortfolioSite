@@ -1,6 +1,8 @@
-# Mbongeni Mahlangu - Portfolio Website
+# Mbongeni Mahlangu - Portfolio
 
-A modern, responsive portfolio website showcasing Mbongeni Mahlangu's skills, experience, and projects. The website features a sleek design with a subtle Matrix-inspired animation in the background.
+[![Azure Static Web Apps CI/CD](https://github.com/MbongX/MbongXDs_PortfolioSite/actions/workflows/azure-static-web-apps-victorious-mushroom-0257e8703.yml/badge.svg)](https://github.com/MbongX/MbongXDs_PortfolioSite/actions)
+
+A modern, responsive portfolio website showcasing Mbongeni Mahlangu's professional skills, experience, and projects. The website features a sleek design with optimized performance and security best practices.
 
 ## ✨ Features
 
@@ -24,7 +26,9 @@ A modern, responsive portfolio website showcasing Mbongeni Mahlangu's skills, ex
 - **Deployment**: Azure Static Web Apps, GitHub Actions
 - **Version Control**: Git & GitHub
 
-## 📋 Prerequisites
+## 🚀 Quick Start
+
+### Prerequisites
 
 - Node.js 20.x or higher
 - npm 9.x or higher
@@ -43,12 +47,18 @@ A modern, responsive portfolio website showcasing Mbongeni Mahlangu's skills, ex
    npm ci
    ```
 
-3. Start the development server:
+3. Build the project:
    ```bash
+   npm run build
+   ```
+
+4. Start the production server:
+   ```bash
+   npm start
    npm start
    ```
 
-4. Open your browser and navigate to:
+5. Open your browser and navigate to:
    ```
    http://localhost:3000
    ```
