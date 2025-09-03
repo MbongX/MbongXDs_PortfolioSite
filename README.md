@@ -6,20 +6,24 @@ A modern, responsive portfolio website showcasing Mbongeni Mahlangu's profession
 
 ## ✨ Features
 
-- 🚀 Blazing fast performance with optimized assets
-- 🔒 Security-focused with strict Content Security Policy
-- 📱 Fully responsive design for all devices
-- ⚡ Optimized for Core Web Vitals
+- 🚀 Responsive design that works on all devices
+- 🎨 Modern UI with smooth animations and transitions
+- 🔮 Interactive Matrix-style background animation
+- 📱 Mobile-first approach with optimized performance
+- 📂 Project showcase with detailed modals
+- 📧 Contact form functionality
 - 🌐 Deployed on Azure Static Web Apps
-- 🔄 Efficient caching strategy for optimal loading
+- 🔒 Security headers and best practices
+- ⚡ Performance optimized with caching strategies
 
 ## 🛠️ Tech Stack
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Server**: Node.js with Express
-- **Security**: Helmet.js, CSP, HSTS
-- **Performance**: Compression, asset optimization
-- **Deployment**: Azure Static Web Apps with GitHub Actions
+- **Backend**: Node.js with Express
+- **Build Tools**: npm, cpx
+- **Security**: Helmet.js, CSP headers
+- **Performance**: Compression, caching
+- **Deployment**: Azure Static Web Apps, GitHub Actions
 - **Version Control**: Git & GitHub
 
 ## 🚀 Quick Start
@@ -28,8 +32,9 @@ A modern, responsive portfolio website showcasing Mbongeni Mahlangu's profession
 
 - Node.js 20.x or higher
 - npm 9.x or higher
+- Azure account (for deployment)
 
-### Local Development
+## 🚀 Local Development
 
 1. Clone the repository:
    ```bash
@@ -39,7 +44,7 @@ A modern, responsive portfolio website showcasing Mbongeni Mahlangu's profession
 
 2. Install dependencies:
    ```bash
-   npm install
+   npm ci
    ```
 
 3. Build the project:
@@ -50,6 +55,7 @@ A modern, responsive portfolio website showcasing Mbongeni Mahlangu's profession
 4. Start the production server:
    ```bash
    npm start
+   npm start
    ```
 
 5. Open your browser and navigate to:
@@ -57,40 +63,62 @@ A modern, responsive portfolio website showcasing Mbongeni Mahlangu's profession
    http://localhost:3000
    ```
 
-## 🚀 Deployment
+## 🚀 Production Build
 
-This project is configured for automatic deployment to Azure Static Web Apps via GitHub Actions. Any push to the `master` branch will trigger a new deployment.
+To create a production build:
+
+```bash
+npm run build
+```
+
+This will:
+1. Clean the `public/static` directory
+2. Copy all static assets to the public directory
+3. Optimize assets for production
+
+## 🌐 Deployment
+
+The application is configured for deployment to Azure Static Web Apps with GitHub Actions. The deployment workflow is automatically triggered on pushes to the `master` branch.
 
 ### Manual Deployment
 
-1. Install the Azure CLI:
-   ```bash
-   curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-   ```
+1. Push your changes to the `master` branch
+2. GitHub Actions will automatically build and deploy the application
 
-2. Login to Azure:
-   ```bash
-   az login
-   ```
+### Environment Variables
 
-3. Deploy to Azure Static Web Apps:
-   ```bash
-   az staticwebapp deploy \
-       --name your-app-name \
-       --source . \
-       --location centralus \
-       --token $AZURE_STATIC_WEB_APPS_TOKEN
-   ```
+Create a `.env` file in the root directory with the following variables:
 
-## 🔒 Security Headers
+```
+NODE_ENV=production
+PORT=3000
+```
 
-This application includes the following security headers:
-- Content Security Policy (CSP)
+## 🏗️ Project Structure
+
+```
+├── .github/workflows/    # GitHub Actions workflows
+├── api/                  # API endpoints (if any)
+├── public/               # Public assets
+│   ├── static/           # Static files (CSS, JS, images)
+│   ├── index.html        # Main HTML file
+│   └── staticwebapp.config.json  # Azure Static Web Apps config
+├── static/               # Source static files
+├── .gitignore           # Git ignore file
+├── package.json         # Project configuration
+└── server.js            # Express server
+```
+
+## 🔒 Security
+
+The application includes several security measures:
+
+- Content Security Policy (CSP) headers
 - HTTP Strict Transport Security (HSTS)
-- X-Content-Type-Options
-- X-Frame-Options
-- X-XSS-Protection
-- Referrer-Policy
+- XSS Protection
+- Clickjacking protection
+- MIME-type sniffing prevention
+- Secure headers with Helmet.js
 
 ## 🏗️ Building for Production
 
